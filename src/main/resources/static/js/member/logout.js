@@ -5,10 +5,9 @@ function getlogoutMno(){
         url: "/member/getlogoutMno",
         type: "get",
         success: function(re){
-            alert("결과 " + re)
             if( re == 1 ){
                 alert('로그아웃 되었습니다.')
-                location.href = "http://192.168.17.131:8080/";
+                location.href = "http://192.168.17.131:8080";
             }
         }
     })

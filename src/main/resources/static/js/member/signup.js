@@ -13,7 +13,6 @@ function setmember(){
         contentType : "application/json",   // 제이슨 타입으로 보내야 컨트롤러에서 @RequestBody 으로 받을 수 있음
         success : function(re){
             alert(re);
-            location.href = "http://192.168.17.131:8080/";
         }
     })
 }

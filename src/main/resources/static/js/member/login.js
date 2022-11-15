@@ -13,7 +13,6 @@ function getmember(){
         contentType: "application/json",
         success: function(re){
             alert(re)
-            location.href = "http://192.168.17.131:8080/";
         }
     })
 }

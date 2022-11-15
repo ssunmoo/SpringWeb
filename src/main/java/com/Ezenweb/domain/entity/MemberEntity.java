@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Builder
-
 @Entity // 해당 클래스와 연결된 DB의 테이블과 매핑[연결]
 @Table(name="member") // DB에서 사용될 테이블 이름
 public class MemberEntity {
@@ -21,6 +20,7 @@ public class MemberEntity {
     private int mno;
     private String memail;
     private String mpw;
+
 
 
     // 2. 생성자

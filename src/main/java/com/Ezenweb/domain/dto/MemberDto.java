@@ -18,7 +18,6 @@ public class MemberDto {
     public MemberEntity toEntity() {
 
         return MemberEntity.builder()
-                .mno( this.mno )
                 .memail( this.memail )
                 .mpw( this.mpw )
                 .build();

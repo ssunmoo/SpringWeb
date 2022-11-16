@@ -4,12 +4,18 @@ import com.Ezenweb.domain.dto.MemberDto;
 import com.Ezenweb.domain.entity.MemberEntity;
 import com.Ezenweb.domain.entity.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service    // 해당 클래스가 서비스임을 명시
 public class MemberService {
@@ -19,6 +25,9 @@ public class MemberService {
     private MemberRepository memberRepository;
     @Autowired // 스프링 컨테이너 [ 메모리] 위임
     private HttpServletRequest request; // 요청 객체 @Autowired 사용 시 new 생성자 안씀!!!
+    @Autowired
+    private JavaMailSender javaMailSender; // 메일 전송 객체
+
 
     // -------------------------------- 서비스 메소드 ----------------------------------
 
@@ -76,11 +85,9 @@ public class MemberService {
         // * 로그인된 회원의 레코드/엔티티 꺼내기
         // 1. 세션 호출
         Object object =  request.getSession().getAttribute("loginMno");
-        System.out.println("세션확인11::  " + object);
         // 2. 세션 확인
         if( object != null ){ // 만약에 세션이 null이 아니면 [ 로그인이 있으면 ]
             int mno = (Integer) object; // 형변환 [ object -> int ]
-            System.out.println("세션확인22::  " + mno );
 
             // 3. 세션에 있는 회원번호 [pk]로 리포지토리에서 찾기
             Optional<MemberEntity> optional = memberRepository.findById(mno);
@@ -100,20 +107,18 @@ public class MemberService {
     } // setdelete e
 
 
-    // 5. 비밀번호 수정
+    // 5. 비밀번호 변경
     @Transactional  // 데이터 수정 [ update ] 시 필수
     public int setupdate( String mpw  ){
 
         // 1. 세션호출
         Object object = request.getSession().getAttribute("loginMno");
-        System.out.println(" 비번수정 세션 확인1 object ::  " + object);
         // 2. 세션 존재 여부 확인
         if( object != null ){
             int mno = (Integer)object;
 
            // 3. PK 값으로 엔티티[레코드] 검색
            Optional<MemberEntity> optional = memberRepository.findById( mno );
-            System.out.println(" 비번수정 세션 확인2 mno ::  " + mno);
 
            // 4. 검색된 결과 여부 판단
            if( optional.isPresent() ){ // 엔티티가 존재하면
@@ -132,7 +137,6 @@ public class MemberService {
     public int getloginMno(){
         // 1. 세션 호출
         Object object = request.getSession().getAttribute("loginMno");
-        System.out.println("로그인했니? : " + object);
 
         // 2. 세션 값 확인
         if( object != null ){
@@ -143,17 +147,69 @@ public class MemberService {
 
 
     // 7. 로그아웃
-    public int getlogoutMno(){
-        Object object = request.getSession().getAttribute("loginMno");
-        System.out.println("번호 잘받아왔뉴 : " + object );
-
-        if( object != null ){
-            System.out.println("111 : " + object );
-            request.getSession().setAttribute("loginMno", null );
-            return 1; // 성공 시 1
-        }
-        return 0;  // 실패 시 0
+    public void logout(){
+        // 기본 세션명의 세션데이터를 null
+        request.getSession().setAttribute("loginMno" , null );
     }
+
+    // 8. 회원 목록
+    public List<MemberDto> list(){
+        // 1. JPA 이용한 모든 엔티티 호출
+        List<MemberEntity> list = memberRepository.findAll();
+        // 2. 엔티티 --> DTO
+        // Dto list 선언
+        List<MemberDto> dtoList = new ArrayList<>();
+        for( MemberEntity entity : list ){
+            dtoList.add( entity.toDto() ); // 형변환
+        }
+        return dtoList;
+    }
+
+    // 9. 메일 인증코드 발송
+    public String getauth( String toemail ){
+        String auth = ""; // 인증 코드
+        String html = "<html><body> <h1> SpringWeb 회원 가입 이메일 인증코드 입니다.</h1>";
+
+        Random random = new Random();   // 난수 객체
+        for ( int i = 0; i < 6; i++ ){  // 6번 반복
+            char randomchar = (char)(random.nextInt(26)+97); // 97부터 26개 : 97~122까지 : 알파벳 소문자
+            // char randomchar = (char)(random.nextInt(10)+48); // 48부터 10개 : 48~57까지 : 0~9
+            auth += randomchar;
+        }
+        html += "<div> 인증코드 : " + auth + "</div>";
+        html += "</body></html>";
+
+        emailsend( toemail, "인증코드입니다.", html ); // 메일 전송
+        return auth; // 인증 코드를 반환
+    } // getauth e
+    
+    // **. 메일 전송 서비스
+    public void emailsend( String toemail, String title, String content ) {
+
+        try{
+        // 1. Mime 프로토콜 객체 생성
+        MimeMessage message = javaMailSender.createMimeMessage();
+        // 2. Mime 설정 객체 생성 new MimeMessageHelper( mime객체명, 첨부파일여부, 인코딩타입 )
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper( message, true, "UTF-8");
+        // 3. 보내는 사람의 정보
+        mimeMessageHelper.setFrom("14hhy@naver.com", "관리자");
+        // 4. 받는 사람의 정보
+        mimeMessageHelper.setTo( toemail );
+        // 5. 메일 제목
+        mimeMessageHelper.setSubject( title );
+        // 6. 메일의 내용
+        mimeMessageHelper.setText( content.toString(), true ); // HTML 형식
+        // 7. 메일 전송
+        javaMailSender.send( message );
+
+        } catch ( Exception e ) {
+            System.out.println("메일 전송 실패 :: " + e);
+        }
+
+    } // emailsend e
+
+
+
 
 
 

@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController // 해당 클래스가 컨트롤임을 명시 [ RestFul api 사용 ]
 @RequestMapping("/member") // 공통 URL 매핑 주소
 public class MemberController {
@@ -49,12 +51,6 @@ public class MemberController {
     @GetMapping("/update")
     public Resource updatepw() {
         return new ClassPathResource("templates/member/update.html");
-    }
-
-    // 6. 로그아웃
-    @GetMapping("/logout")
-    public Resource logout() {
-        return new ClassPathResource("templates/member/logout.html");
     }
 
 
@@ -105,13 +101,25 @@ public class MemberController {
     }
 
     // 7. 로그아웃
-    @GetMapping("/getlogoutMno")
-    public int getlogoutMno(){
-        int result = memberService.getlogoutMno();
-        return result;
+    @GetMapping("/logout") // 7. 로그아웃
+    public void logout(){
+        memberService.logout();
     }
 
+    // 8. 회원목록
+    @GetMapping("/list") // 8. 회원 목록
+    @ResponseBody
+    public List<MemberDto> list(){
+        List<MemberDto> list = memberService.list();
+        System.out.println("확인:" + list );
+        return list;
+    }
 
+    // 9. 메일 인증코드 발송
+    @GetMapping("/getauth")
+    public String getauth( @RequestParam("toemail") String toemail ) {
+        return memberService.getauth( toemail );
+    }
 
 
 

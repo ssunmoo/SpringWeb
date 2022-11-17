@@ -2,79 +2,83 @@ package com.Ezenweb.controller;
 
 import com.Ezenweb.domain.dto.BoardDto;
 import com.Ezenweb.service.BoardService;
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
-@RestController             // 해당 클래스가 컨트롤 목적으로 사용 [ 스프링 MVC 관리 ]
-@RequestMapping("/board")   // 해당 클래스의 공통 URL
+@RestController // @Controller + @ResourceBody
+@RequestMapping("/board")
 public class BoardController {
-
-    // -------------------------- page load URL --------------------------
     
-    // 1. 게시물 목록 페이지[ HTML ] 열기
-    @GetMapping("/list") // URL 정의
-    public Resource boardlist(){
+    // --------------------------- 1. 전역변수 ----------------------------------------------
+
+    // 1. 서비스 메소드 사용을 위한 객체 생성
+    @Autowired // 어노테이션을 이용해서 spring 컨테이너에 빈[메모리] 생성
+    private BoardService boardService;
+
+
+    // --------------------------- 2. 페이지 요청 [view] ------------------------------------
+    
+    // 1. 게시판 전체 페이지 열기
+    @GetMapping("/list") // URL : localhost:8080/board/list 주소를 입력 시 해당 html 반환
+    public Resource getlist(){
         return new ClassPathResource("templates/board/list.html");
     }
-
     // 2. 게시물 작성 페이지 열기
     @GetMapping("/write")
-    public Resource write(){
-        // Resource : 자료 [ HTML , CSS, JS 파일 등 ]
+    public Resource getwrite(){
         return new ClassPathResource("templates/board/write.html");
-                                    //  HTML의 파일 경로 최상위 : resources
+    }
+    // 3. 게시물 개별 조회 페이지 열기
+    @GetMapping("/view")
+    public Resource getview(){
+        return new ClassPathResource("templates/board/view.html");
     }
 
-    // -------------------------------------------------------------------
+    // 4. 게시물 수정 페이지 열기
+    @GetMapping("/update")
+    public Resource getupdate(){
+        return new ClassPathResource("templates/board/update.html");
+    }
 
-
-
-
-    // ------------ 기능 처리 ------------
-
+    // --------------------------- 3. 요청과 응답 [model] -----------------------------------
+    
+    // *** HTTP 데이터 요청 메소드 매핑 : @RequestBody @RequestParam @PathVariable[경로상요청시]
+    
     // 1. 게시물 작성 [ 첨부파일 ]
     @PostMapping("/setboard")
-    public boolean setboard(@RequestBody BoardDto boardDto ){
-
-        // 1. Dto 내용 확인
-        System.out.println(boardDto.toString());
-        // 2. 서비스[비지니스 로직]로 이동
-        boolean result = new BoardService().setboard(boardDto);
-
-        // 3. 반환
-        return true;
-        // boolean : Content-Type [반환타입] : application/json
-        // String : Content-Type [반환타입] : text/html; charset=UTF-8
-        // Resource : Content-Type [반환타입] : application/json
-
+    public boolean setboard( @RequestBody BoardDto boardDto ){
+        return boardService.setboard( boardDto );
     }
 
-    // 2. 게시물 리스트 [ 페이지, 검색 ]
-    @GetMapping("/getboards")
-    public ArrayList< BoardDto > getboards() {
-        // 1. 서비스로 이동
-        ArrayList< BoardDto > list = new BoardService().getboards();
-
-
-        // 2. 반환
-        return list;
+    // 2. 게시물 목록 조회 [ 페이징, 검색 ]
+    @GetMapping("/boardlist")
+    public List< BoardDto > boardlist(){
+        return boardService.boardlist();
+    }
+    // 3. 게시물 개별 조회
+    @GetMapping("/getboard")
+    public BoardDto getboard( @RequestParam("bno") int bno ){
+        return boardService.getboard( bno );
+    }
+    // 4. 게시물 삭제
+    @DeleteMapping("/delboard")
+    public boolean delboard( @RequestParam("bno") int bno ){
+        return boardService.delboard( bno );
+    }
+    // 5. 게시물 수정 [ 첨부파일 ]
+    @PutMapping("/upboard")
+    public boolean upboard( @RequestBody BoardDto boardDto ){
+        return boardService.upboard( boardDto );
     }
 
-//    // 3. 게시물 개별 조회
-//    @GetMapping("/getboard")
-//
-//
-//    // 4. 게시물 수정
-//    @PutMapping("/updateboard")
-//
-//
-//    // 5. 게시물 삭제
-//    @DeleteMapping("/deleteboard")
 
-       
-    
-    
+
+
+
 }

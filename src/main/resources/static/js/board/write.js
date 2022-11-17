@@ -1,10 +1,10 @@
 
-
 function setboard(){
 
     let data = {
         btitle : document.querySelector('.btitle').value,
-        bcontent : document.querySelector('.bcontent').value
+        bcontent : document.querySelector('.bcontent').value,
+        bfile : document.querySelector('.bfile').value
     }
 
     $.ajax({

@@ -26,7 +26,7 @@ function setmember(){
     })
 }
 
-let auth = null;        // 발급된 인증 코드 변수
+let auth = 1234;        // 발급된 인증 코드 변수
 let timer = 0;          // 인증 시간 변수
 let timerinter = null;  // setInterval 타이머 함수
 

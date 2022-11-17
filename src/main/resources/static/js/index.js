@@ -6,7 +6,6 @@ function getloginMno(){
         url: "/member/getloginMno",
         type: "get",
         success: function(re){
-            alert(re);
 
             let btnbox = '';
             if( re == "0" ){    // 로그인 안했다
@@ -45,17 +44,17 @@ function list(){
         type: "get",
         success: function(re){
             let html = '<tr>'
-                     + '<th>번호</th><th>이메일</th><th>비밀번호</th>'
+                     + '<th>번호</th><th>이메일</th><th>비밀번호</th><th>연락처</th>'
                      + '</tr>';
             re.forEach( (m) => {
                 html += '<tr>'
-                      + '<td>'+ m.mno +'</td><td>'+ m.memail +'</td><td>'+ m.mpw +'</td>'
+                      + '<td>'+ m.mno +'</td><td>'+ m.memail +'</td><td>'+ m.mpw +'</td><td>'+ m.mphone +'</td>'
                       + '</tr>'
             })
             document.querySelector('.mtable').innerHTML = html;
         }
     })
-}
+} // list e
 
 
 

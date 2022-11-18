@@ -1,6 +1,9 @@
-package com.Ezenweb.domain.entity;
+package com.Ezenweb.domain.entity.board;
 
 import com.Ezenweb.domain.dto.BoardDto;
+import com.Ezenweb.domain.entity.BaseEntity;
+import com.Ezenweb.domain.entity.bcategory.BcategoryEntity;
+import com.Ezenweb.domain.entity.member.MemberEntity;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -13,13 +16,14 @@ import javax.persistence.*;
 @Getter @Setter
 @Builder
 @ToString
-public class BoardEntity {
+public class BoardEntity extends BaseEntity {
 
     // 1. 필드
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY) // auto increment
     private int bno;            // 게시글번호
 
+    @Column(nullable = false)
     private String btitle;      // 제목
 
     @Column(nullable = false, columnDefinition = "TEXT" ) // 자료형을 text로 변경
@@ -32,14 +36,17 @@ public class BoardEntity {
     @Column(nullable = false)
     private String bfile;       // 첨부파일
 
-    @Column(nullable = false)
-    private int mno;            // 작성자 회원번호 FK
+    // 연관관계1 [ 1:N FK에 해당하는 어노테이션 ] 회원번호 [PK] <-- 양방향 --> 게시물번호 [FK]
+    @ManyToOne // PK[멤버]의 엔티티 객체
+    @JoinColumn(name="mno") // 테이블에서 사용할 FK의 필드명
+    @ToString.Exclude       // 해당 필드는 ToString을 사용하지 않는다 [ 양방향 시 필수 ]
+    private MemberEntity memberEntity; // 작성자 회원번호 FK
 
-    @Column(nullable = false)
-    private int cno;            // 카테고리 FK
-
-
-
+    // 연관관계2 [ 카테고리번호 [PK] <-- 양방향 --> 게시물번호 [FK]
+    @ManyToOne
+    @JoinColumn(name="bcno")
+    @ToString.Exclude
+    private BcategoryEntity bcategoryEntity;
 
 
     public BoardDto toDto(){
@@ -50,10 +57,7 @@ public class BoardEntity {
                 .bcontent( this.bcontent)
                 .bview( this.bview )
                 .bfile( this.bfile )
-                .mno( this.mno )
-                .cno( this.cno )
+                .memail( this.memberEntity.getMemail() )
                 .build();
     }
-
-    
 }

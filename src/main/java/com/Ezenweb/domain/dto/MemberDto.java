@@ -1,9 +1,7 @@
 package com.Ezenweb.domain.dto;
 
-import com.Ezenweb.domain.entity.MemberEntity;
+import com.Ezenweb.domain.entity.member.MemberEntity;
 import lombok.*;
-
-import javax.persistence.Column;
 
 @NoArgsConstructor
 @AllArgsConstructor

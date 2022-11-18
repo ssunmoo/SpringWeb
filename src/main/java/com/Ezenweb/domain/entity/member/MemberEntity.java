@@ -1,10 +1,13 @@
-package com.Ezenweb.domain.entity;
+package com.Ezenweb.domain.entity.member;
 
 import com.Ezenweb.domain.dto.MemberDto;
+import com.Ezenweb.domain.entity.BaseEntity;
+import com.Ezenweb.domain.entity.board.BoardEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,7 +17,7 @@ import java.time.LocalDateTime;
 @Builder
 @Entity // 해당 클래스와 연결된 DB의 테이블과 매핑[연결]
 @Table(name="member") // DB에서 사용될 테이블 이름
-public class MemberEntity {
+public class MemberEntity extends BaseEntity { // 베이스엔티티 상속받기
 
     // 1. 필드
     @Id // 엔티티 당 무조건 1개 이상 [PK]
@@ -30,7 +33,9 @@ public class MemberEntity {
     @Column(nullable = false)   // not null
     private String mphone;      // 회원 전화번호 필드
 
-
+    @OneToMany( mappedBy = "memberEntity" ) // 1:N PK쪽에 사용하는 어노테이션 , mappedBy="fk필드명"
+    @Builder.Default // 빌더 사용 시 해당 필드의 초기값 설정
+    private List<BoardEntity> boardEntityList = new ArrayList<>();
     // 2. 생성자
 
     // 3. 메소드
@@ -44,5 +49,4 @@ public class MemberEntity {
                 .mphone( this.mphone )
                 .build(); // 빌드 메소드 끝
     }
-
 }

@@ -39,7 +39,6 @@ public class BoardController {
     public Resource getview(){
         return new ClassPathResource("templates/board/view.html");
     }
-
     // 4. 게시물 수정 페이지 열기
     @GetMapping("/update")
     public Resource getupdate(){
@@ -53,9 +52,9 @@ public class BoardController {
     // 1. 게시물 작성 [ 첨부파일 ]
     @PostMapping("/setboard")
     public boolean setboard( @RequestBody BoardDto boardDto ){
+        System.out.println( "컨트롤러 디티오 화긴 :: "+ boardDto );
         return boardService.setboard( boardDto );
     }
-
     // 2. 게시물 목록 조회 [ 페이징, 검색 ]
     @GetMapping("/boardlist")
     public List< BoardDto > boardlist(){
@@ -74,8 +73,11 @@ public class BoardController {
     // 5. 게시물 수정 [ 첨부파일 ]
     @PutMapping("/upboard")
     public boolean upboard( @RequestBody BoardDto boardDto ){
+        System.out.println(" 컨트롤 수정::"+boardDto);
         return boardService.upboard( boardDto );
     }
+
+    // 6. 조회수
 
 
 

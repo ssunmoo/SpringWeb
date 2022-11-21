@@ -16,7 +16,7 @@ public class BoardDto {
     private int bview;          // 조회수
     private String bfile;       // 파일
     private int mno;            // 작성자 회원번호 FK
-    private int bcno;            // 카테고리 FK
+    private int bcno;           // 카테고리 FK
     private String memail;      // 회원 아이디
 
     public BoardEntity toEntity() {

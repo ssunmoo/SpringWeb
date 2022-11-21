@@ -1,6 +1,9 @@
 package com.Ezenweb.controller;
 
+import com.Ezenweb.domain.dto.BcategoryDto;
 import com.Ezenweb.domain.dto.BoardDto;
+import com.Ezenweb.domain.dto.GuestbookCgDto;
+import com.Ezenweb.domain.dto.GuestbookDto;
 import com.Ezenweb.service.BoardService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,13 @@ public class BoardController {
         return new ClassPathResource("templates/board/update.html");
     }
 
+    // 5. 방명록  페이지 열기
+    @GetMapping("/guestbook")
+    public Resource getguest(){
+        return new ClassPathResource("templates/board/guestbook.html");
+    }
+
+
     // --------------------------- 3. 요청과 응답 [model] -----------------------------------
     
     // *** HTTP 데이터 요청 메소드 매핑 : @RequestBody @RequestParam @PathVariable[경로상요청시]
@@ -57,8 +67,8 @@ public class BoardController {
     }
     // 2. 게시물 목록 조회 [ 페이징, 검색 ]
     @GetMapping("/boardlist")
-    public List< BoardDto > boardlist(){
-        return boardService.boardlist();
+    public List< BoardDto > boardlist( @RequestParam("bcno") int bcno ){
+        return boardService.boardlist( bcno );
     }
     // 3. 게시물 개별 조회
     @GetMapping("/getboard")
@@ -77,9 +87,44 @@ public class BoardController {
         return boardService.upboard( boardDto );
     }
 
-    // 6. 조회수
+    // 6. 카테고리 등록
+    @PostMapping("/setbcategory")
+    public boolean setbcategory( @RequestBody BcategoryDto bcategoryDto ){
+        System.out.println("컨트롤러 ::: " + bcategoryDto);
+        return boardService.setbcategory( bcategoryDto );
+    }
+
+    // 7. 모든 카테고리 출력
+    @GetMapping("/bcategorylist")
+    public List<BcategoryDto> bcategorylist(){
+        return boardService.bcategorylist();
+    }
 
 
+    // 8. 방명록 작성
+    @PostMapping("/setguestbook")
+    public boolean setguestbook(@RequestBody GuestbookDto guestbookDto ){
+        return boardService.setguestbook( guestbookDto );
+
+    }
+
+    // 9. 방명록 출력
+    @GetMapping("/getguestbook")
+    public List< GuestbookDto > getguestbook(){
+        return boardService.getguestbook();
+    }
+
+    // 10. 방명록 카테고리 등록
+    @PostMapping("/setgustcategory")
+    public boolean setgustcategory(@RequestBody GuestbookCgDto guestbookCgDto ){
+        return boardService.setgustcategory( guestbookCgDto );
+    }
+
+    // 11. 방명록 카테고리 출력
+    @GetMapping("getgustcategorylist")
+    public List< GuestbookCgDto > getgustcategorylist(){
+        return boardService.getgustcategorylist();
+    }
 
 
 

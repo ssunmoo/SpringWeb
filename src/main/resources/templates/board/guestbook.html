@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+  <h2> 방명록 </h2>
+  <span> 카테고리 등록 <input type="text" class="gbcname"> </span>
+  <span><button type="button" onclick="setgustcategory()"> 등록 </button> </span>
+  <div class="gbcbox"> </div> <br>
+
+
+  <form>
+      내용 <input type="text" class="gbcontent"> <br>
+      작성자 <input type="text" class="gbname"> <br>
+      <button type="button" onclick="setguestbook()"> 등록 </button>
+  </form>
+  <h2> 게시물 보기 </h2>
+  <table class="guestbooklist">
+
+  </table>
+
+
+
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="/static/js/board/guestbook.js"></script>
+</body>
+</html>

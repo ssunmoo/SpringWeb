@@ -201,33 +201,46 @@ public class BoardService {
 
     }
 
-
+    // -------------------------------- 비회원제 게시판 ---------------------------------
     // 8. 방명록 작성
     @Transactional
     public boolean setguestbook( GuestbookDto guestbookDto ){
-
+        System.out.println("guestbookDto.getGbcno() :: "+guestbookDto.getGbcno());
         // 카테고리 번호 불러오기
         Optional< GuestbookCgEntity > optional = guestbookCgRepository.findById( guestbookDto.getGbcno() );
-        if( optional.isPresent() ){
+
+        System.out.println("서비스 optional :: "+optional);
+        if( !optional.isPresent() ){
+            System.out.println("optional 없다");
             return false;
         }
-        GuestbookCgEntity gbCgEntity = optional.get();
+        GuestbookCgEntity gbCgEntity = optional.get(); // FK에 넣어줄 값 가지고있기
+        System.out.println("서비스 gbCgEntity :: "+gbCgEntity);
+        
         // 입력된 내용 엔티티에 저장하기
         GuestbookEntity guestbookEntity = guestbookRepository.save( guestbookDto.toGuestbookEntity());
+        System.out.println("서비스 guestbookEntity :: "+guestbookEntity);
         if ( guestbookEntity.getGbno() != 0 ){ // 게시물 번호가 0이 아니면 성공
-            guestbookEntity.setGuestbookCgEntity( gbCgEntity );
+            guestbookEntity.setGuestbookCgEntity( gbCgEntity ); // FK에 데이터 넣어주기
             gbCgEntity.getGuestbookEntityList().add( guestbookEntity );
             return true;
+        }else {
+            return false; // 0이면 실패
         }
-        return false; // 0이면 실패
     }
 
     // 9. 방명록 출력
     @Transactional
-    public List< GuestbookDto > getguestbook(){
-        List< GuestbookEntity > gbEntities = guestbookRepository.findAll();
-        List< GuestbookDto > guestbookDtos = new ArrayList<>();
+    public List< GuestbookDto > getguestbook( int gbcno ){
+        List< GuestbookEntity > gbEntities = null;
 
+        if( gbcno == 0 ){
+            gbEntities = guestbookRepository.findAll(); // 0이면 전체보기
+        }else { // 카테고리별보기
+            GuestbookCgEntity gbCgEntity = guestbookCgRepository.findById( gbcno ).get(); // 선택된 카테고리 번호 가져와서 저장
+            gbEntities = gbCgEntity.getGuestbookEntityList(); // 해당 엔티티의 게시물 목록 호출
+        }
+        List< GuestbookDto > guestbookDtos = new ArrayList<>();
         for( GuestbookEntity entity : gbEntities){
             guestbookDtos.add( entity.toGuestbookDto() );
         }
@@ -241,7 +254,6 @@ public class BoardService {
         return true;
     }
 
-
     // 11. 방명록 카테고리 출력
     @Transactional
     public List< GuestbookCgDto > getgustcategorylist(){
@@ -251,8 +263,38 @@ public class BoardService {
             guestbookCgDtos.add( entity.togbcDto() );
         }
         return guestbookCgDtos;
-
     }
+
+    // 12. 방명록 게시글 수정
+    @Transactional
+    public boolean gbupdate( GuestbookDto guestbookDto ){
+        Optional < GuestbookEntity > optional = guestbookRepository.findById( guestbookDto.getGbno() ); // 게시물번호 가져오기
+
+        if( optional.isPresent() ){ // 게시글 번호가 존재할 경우
+            GuestbookEntity gbentity = optional.get();
+            gbentity.setGbcontent( guestbookDto.getGbcontent() );
+            gbentity.setGbname( guestbookDto.getGbname() );
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    // 13. 방명록 게시글 삭제
+    @Transactional
+    public boolean gbdelete (int gbno ){
+        Optional < GuestbookEntity > optional = guestbookRepository.findById( gbno );
+        if ( optional.isPresent() ){
+            GuestbookEntity entity = optional.get(); // 선택된 게시글
+            guestbookRepository.delete( entity ); // 리포지토리에서 삭제해줘
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+
+
 
 
 

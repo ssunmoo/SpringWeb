@@ -35,7 +35,7 @@ public class GuestbookEntity {
 
 
 
-    public GuestbookDto toGuestbookDto() {
+    public GuestbookDto toGuestbookDto() { // 뷰에서 입력 받은 내용
         return GuestbookDto.builder()
                 .gbno( this.gbno )
                 .gbcontent( this.gbcontent )

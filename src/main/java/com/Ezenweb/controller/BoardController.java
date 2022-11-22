@@ -101,17 +101,17 @@ public class BoardController {
     }
 
 
+    // -------------------------------- 비회원제 게시판 ---------------------------------
     // 8. 방명록 작성
     @PostMapping("/setguestbook")
     public boolean setguestbook(@RequestBody GuestbookDto guestbookDto ){
         return boardService.setguestbook( guestbookDto );
-
     }
 
     // 9. 방명록 출력
     @GetMapping("/getguestbook")
-    public List< GuestbookDto > getguestbook(){
-        return boardService.getguestbook();
+    public List< GuestbookDto > getguestbook( @RequestParam("gbcno") int gbcno ){
+        return boardService.getguestbook( gbcno );
     }
 
     // 10. 방명록 카테고리 등록
@@ -126,6 +126,16 @@ public class BoardController {
         return boardService.getgustcategorylist();
     }
 
+    // 12. 방명록 게시글 수정
+    @PutMapping("/gbupdate")
+    public boolean gbupdate( @RequestBody GuestbookDto guestbookDto ){
+        return boardService.gbupdate( guestbookDto );
+    }
 
+    // 13. 방명록 게시글 삭제
+    @DeleteMapping("/gbdelete")
+    public boolean gbdelete( @RequestParam("gbno") int gbno ){
+        return boardService.gbdelete( gbno );
+    }
 
 }

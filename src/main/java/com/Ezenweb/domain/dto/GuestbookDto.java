@@ -17,7 +17,7 @@ public class GuestbookDto {
     private int gbcno; // 카테고리 FK
 
 
-    public GuestbookEntity toGuestbookEntity(){
+    public GuestbookEntity toGuestbookEntity(){ // 실제 저장할 내용
         return GuestbookEntity.builder()
                .gbno(this.gbno)
                .gbcontent(this.gbcontent)

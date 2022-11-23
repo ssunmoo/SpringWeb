@@ -5,17 +5,15 @@ let gbno = 0;
 // 1 .게시글 작성
 function setguestbook(){
 
-let data = {
-        gbcontent : document.querySelector('.gbcontent').value,
-        gbname : document.querySelector('.gbname').value,
-        gbcno : gbcno // 카테고리를 알기위해 값 넘기기
-    }
-
+    let formbox = document.querySelector('.formbox');
+    let formdata = new FormData( formbox );
+    formdata.set( "gbcno", gbcno ); // 카테고리 번호 추가 저장
     $.ajax({
          url        : "/board/setguestbook",
          type       : "post",
-         data       : JSON.stringify( data ), // 객체로 통신하기 위해
-         contentType: "application/json", // 전송 타입 : application/json
+         data       : formdata, // 객체로 통신하기 위해
+         contentType: false,
+         processData: false,
          success    : re => {
             console.log(re);
             if( re == true ){
@@ -38,12 +36,12 @@ function getguestbook(){
          success    : re => {
             console.log(re);
             let html = '<tr>'
-                     + '<th> 번호 </th><th> 내용 </th><th> 작성자 </th><th> 비고 </th>'
+                     + '<th> 번호 </th><th> 내용 </th><th> 작성자 </th><th> 첨부파일 </th>'
                      + '</tr>';
 
             re.forEach( (b) => {
                 html += '<tr>'
-                     +  '<td>'+b.gbno+'</td><td>'+b.gbcontent+'</td><td>'+b.gbname+'</td>'
+                     +  '<td>'+b.gbno+'</td><td>'+b.gbcontent+'</td><td>'+b.gbname+'</td><td>'+b.gbfile+'</td>'
                      +  '<td> <button type="button" onclick="gbupdatebtn('+b.gbno+')" class="gbupdate"> 수정하기 </button> <button type="button" onclick="gbdelete('+b.gbno+')" class="gbdelete"> 삭제 </button> </td>'
                      +  '</tr>'
             })

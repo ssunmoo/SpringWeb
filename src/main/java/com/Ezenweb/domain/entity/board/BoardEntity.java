@@ -9,18 +9,19 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
-@Entity                  // 엔티티 정의
+
 @Table(name = "board")  // 테이블 명 정의
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
 @Builder
 @ToString
+@Entity // 엔티티 정의
 public class BoardEntity extends BaseEntity {
 
     // 1. 필드
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY) // auto increment
+    @GeneratedValue( strategy = GenerationType.IDENTITY)// auto increment
     private int bno;            // 게시글번호
 
     @Column(nullable = false)
@@ -33,7 +34,6 @@ public class BoardEntity extends BaseEntity {
     @ColumnDefault("0")         // JPA가 insert할 경우 default 값 넣기
     private int bview;          // 조회수
 
-    @Column(nullable = false)
     private String bfile;       // 첨부파일
 
     // 연관관계1 [ 1:N FK에 해당하는 어노테이션 ] 회원번호 [PK] <-- 양방향 --> 게시물번호 [FK]
@@ -56,7 +56,6 @@ public class BoardEntity extends BaseEntity {
                 .btitle( this.btitle )
                 .bcontent( this.bcontent)
                 .bview( this.bview )
-                .bfile( this.bfile )
                 .memail( this.memberEntity.getMemail() )
                 .build();
     }

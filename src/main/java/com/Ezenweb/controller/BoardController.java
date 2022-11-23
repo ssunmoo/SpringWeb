@@ -5,6 +5,7 @@ import com.Ezenweb.domain.dto.BoardDto;
 import com.Ezenweb.domain.dto.GuestbookCgDto;
 import com.Ezenweb.domain.dto.GuestbookDto;
 import com.Ezenweb.service.BoardService;
+import com.Ezenweb.service.GuestbookService;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -23,6 +24,9 @@ public class BoardController {
     // 1. 서비스 메소드 사용을 위한 객체 생성
     @Autowired // 어노테이션을 이용해서 spring 컨테이너에 빈[메모리] 생성
     private BoardService boardService;
+
+    @Autowired
+    private GuestbookService guestbookService;
 
 
     // --------------------------- 2. 페이지 요청 [view] ------------------------------------
@@ -59,12 +63,20 @@ public class BoardController {
     
     // *** HTTP 데이터 요청 메소드 매핑 : @RequestBody @RequestParam @PathVariable[경로상요청시]
     
-    // 1. 게시물 작성 [ 첨부파일 ]
+//    // 1. 게시물 작성 [ 첨부파일 없을 때 ]
+//    @PostMapping("/setboard")
+//    public boolean setboard( @RequestBody BoardDto boardDto ){
+//        System.out.println( "컨트롤러 디티오 화긴 :: "+ boardDto.toString() );
+//        return boardService.setboard( boardDto );
+//    }
+
+    // 1. 게시물 작성 [ 첨부파일  ]
     @PostMapping("/setboard")
-    public boolean setboard( @RequestBody BoardDto boardDto ){
-        System.out.println( "컨트롤러 디티오 화긴 :: "+ boardDto );
+    public boolean setboard( BoardDto boardDto ){
+        System.out.println( "컨트롤러 디티오 화긴 :: "+ boardDto.toString() );
         return boardService.setboard( boardDto );
     }
+
     // 2. 게시물 목록 조회 [ 페이징, 검색 ]
     @GetMapping("/boardlist")
     public List< BoardDto > boardlist( @RequestParam("bcno") int bcno ){
@@ -100,42 +112,49 @@ public class BoardController {
         return boardService.bcategorylist();
     }
 
+    // 8. 첨부파일 다운로드
+    @GetMapping("/filedownload")
+    public void filedownload( @RequestParam("filename") String filename ){
+        boardService.filedownload( filename );
+    }
+
 
     // -------------------------------- 비회원제 게시판 ---------------------------------
-    // 8. 방명록 작성
+    // 1. 방명록 작성
     @PostMapping("/setguestbook")
-    public boolean setguestbook(@RequestBody GuestbookDto guestbookDto ){
-        return boardService.setguestbook( guestbookDto );
+    public boolean setguestbook( GuestbookDto guestbookDto ){
+        System.out.println("컨트롤러 ::::  "+ guestbookDto );
+        return guestbookService.setguestbook( guestbookDto );
     }
 
-    // 9. 방명록 출력
+    // 2. 방명록 출력
     @GetMapping("/getguestbook")
     public List< GuestbookDto > getguestbook( @RequestParam("gbcno") int gbcno ){
-        return boardService.getguestbook( gbcno );
+        return guestbookService.getguestbook( gbcno );
     }
 
-    // 10. 방명록 카테고리 등록
+    // 3. 방명록 카테고리 등록
     @PostMapping("/setgustcategory")
     public boolean setgustcategory(@RequestBody GuestbookCgDto guestbookCgDto ){
-        return boardService.setgustcategory( guestbookCgDto );
+        return guestbookService.setgustcategory( guestbookCgDto );
     }
 
-    // 11. 방명록 카테고리 출력
+    // 4. 방명록 카테고리 출력
     @GetMapping("getgustcategorylist")
     public List< GuestbookCgDto > getgustcategorylist(){
-        return boardService.getgustcategorylist();
+        return guestbookService.getgustcategorylist();
     }
 
-    // 12. 방명록 게시글 수정
+    // 5. 방명록 게시글 수정
     @PutMapping("/gbupdate")
     public boolean gbupdate( @RequestBody GuestbookDto guestbookDto ){
-        return boardService.gbupdate( guestbookDto );
+        return guestbookService.gbupdate( guestbookDto );
     }
 
-    // 13. 방명록 게시글 삭제
+    // 6. 방명록 게시글 삭제
     @DeleteMapping("/gbdelete")
     public boolean gbdelete( @RequestParam("gbno") int gbno ){
-        return boardService.gbdelete( gbno );
+        return guestbookService.gbdelete( gbno );
     }
 
 }

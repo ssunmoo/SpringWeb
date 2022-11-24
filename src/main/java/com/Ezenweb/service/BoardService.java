@@ -14,6 +14,7 @@ import com.Ezenweb.domain.entity.board.GuestbookEntity;
 import com.Ezenweb.domain.entity.board.GuestbookRepository;
 import com.Ezenweb.domain.entity.member.MemberEntity;
 import com.Ezenweb.domain.entity.member.MemberRepository;
+import org.hibernate.metamodel.model.domain.internal.MapMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,6 +106,31 @@ public class BoardService {
         }
     }
 
+    // * 첨부파일업로드 [ 1. 쓰기, 수정 메소드 사용 ]
+    @Transactional
+    public boolean fileupload( BoardDto boardDto , BoardEntity boardEntity ) {
+        if ( boardDto.getBfile() != null ) {  // ** 첨부파일 있을때
+            // ** 업로드된 파일의 이름 [ ** 문제점 : 파일 명 중복 ]
+            String uuid = UUID.randomUUID().toString(); // 난수 생성
+            String filename = uuid + "_" + boardDto.getBfile().getOriginalFilename(); // 2. 난수+파일명
+
+            // ** 첨부 파일명 DB 등록
+            boardEntity.setBfile(filename); // 3. 난수+파일명 엔티티에 저장
+
+            // ** 업로드
+            try {
+                // 4. 경로 + 파일명 [ 객체화 ]
+                File uploadfile = new File(path + filename);
+                boardDto.getBfile().transferTo(uploadfile); // 5. 해당 경로로 업로드
+            } catch (IOException e) {
+                System.out.println("첨부파일 업로드 실패");
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // 1. 게시물 작성
     @Transactional
     public boolean setboard( BoardDto boardDto ){
@@ -115,40 +141,16 @@ public class BoardService {
         }
         // 2. 선택한 카테고리 정보 가져오기 -> 카테고리 엔티티 검색
         Optional< BcategoryEntity> optional = bcategoryRepository.findById( boardDto.getBcno() );
-        System.out.println("선택한 카테고리번호 1 "+ optional );
         if( !optional.isPresent() ){ // 내용물[엔티티]가 없면
             return false;
         }
         BcategoryEntity bcategoryEntity = optional.get(); // dto -> entity [ INSERT ]
         // 3. dto -> entity [ INSERT ] 반환 저장된 entity 반환
         BoardEntity boardEntity = boardRepository.save( boardDto.toEntity() ); // 클래스명.메소드명(); -> 메소드가 static 일때만 가능
-        System.out.println("asd" +boardEntity.getBno() );
         if( boardEntity.getBno() != 0 ){ // 4. 생성된 entity의 게시물 번호가 0이 아니면 성공
+            fileupload( boardDto, boardEntity ); // 업로드 함수 실행
 
-            if( boardDto.getBfile() != null ){
-                // ** 업로드된 파일의 이름 [ ** 문제점 : 파일 명 중복 ]
-                String uuid = UUID.randomUUID().toString(); // 난수 생성
-                String filename = uuid+"_"+boardDto.getBfile().getOriginalFilename(); // 2. 난수+파일명
-
-                // ** 첨부 파일명 DB 등록
-                boardEntity.setBfile( filename ); // 3. 난수+파일명 엔티티에 저장
-
-                // ** 업로드
-                try {
-                    // 4. 경로 + 파일명 [ 객체화 ]
-                    File uploadfile = new File(path+filename);
-                    boardDto.getBfile().transferTo( uploadfile ); // 5. 해당 경로로 업로드
-                } catch (IOException e) {
-                    System.out.println("첨부파일 업로드 실패");
-                }
-            }
-
-            // 파일명 중복 안되게 설정 하기
-            // 1. pk + 파일명
-            // 2. uuid + 파일명 [ UUID : 범용 고유 식별자 클래스 UUID.randomUUID().toString()]
-            // 3. 업로드 날짜/시간 + 파일명
-            // 4. 중복된 파일 명 중 최근 파일명 뒤에 파일명 +(중복 수+1)
-            // 1. 회원 <-> 게시물 연관관계 대입
+            // 회원 <--> 게시물 연관관계 대입
             boardEntity.setMemberEntity( memberEntity ); // FK 대입
             // 양방향 [ PK 필드에 FK 연결 ]
             memberEntity.getBoardEntityList().add( boardEntity ); // 내가 쓴 글을 확인할 수 있음
@@ -156,10 +158,9 @@ public class BoardService {
             // 2. 카테고리 <-> 게시물 연관관계 대입
             boardEntity.setBcategoryEntity( bcategoryEntity );
             bcategoryEntity.getBoardEntityList().add( boardEntity );
-
             return true;
         }else{
-            return false; // 0이면 실패
+            return false;
         }
     }
 
@@ -204,26 +205,48 @@ public class BoardService {
 
     // 4. 게시물 삭제
     @Transactional
-    public boolean delboard( int bno ){
-       Optional< BoardEntity > optional = boardRepository.findById( bno );
-       if( optional.isPresent() ){
-            BoardEntity entity = optional.get();
-            boardRepository.delete( entity ); // 찾은 엔티티를 삭제
+    public boolean delboard( int bno ) {
+        Optional<BoardEntity> optional = boardRepository.findById(bno);
+        if (optional.isPresent()) {
+            BoardEntity boardEntity = optional.get();
+
+            // 첨부파일 같이 삭제
+            if (boardEntity.getBfile() != null) {    // 기존 첨부파일 있을 떄
+                File file = new File(path + boardEntity.getBfile()); // 기존 첨부파일 객체화
+                if ( file.exists() ) { // 존재하면
+                    file.delete();   // 파일 삭제
+                }
+            }
+            boardRepository.delete(boardEntity); // 찾은 엔티티를 삭제
             return true;
-       } return false;
+        }else {
+            return false;
+        }
     }
 
-    // 5. 게시물 수정 [ 첨부파일 ]
+    // 5. 게시물 수정 [ 첨부파일 1. 첨부파일이 있을때 수정, 2. 첨부파일이 없을때 추가 ]
     @Transactional
     public boolean upboard( BoardDto boardDto ){
         // 1. Dto에서 수정할 pk 번호 이용해서 엔티티 찾기
         Optional< BoardEntity > optional = boardRepository.findById( boardDto.getBno() );
-
         if( optional.isPresent() ){
-            BoardEntity entity = optional.get();
+            BoardEntity boardEntity = optional.get();
+
+            // 1. 수정할 첨부파일이 있을 때 : 기존 파일 삭제 후 새로 업로드
+            if( boardDto.getBfile() != null){       // 수정할 정보
+                if( boardEntity.getBfile() != null ){    // 기존 첨부파일 있을 떄
+                    File file = new File( path + boardEntity.getBfile() ); // 기존 첨부파일 객체화
+                    if( file.exists()) { // 존재하면
+                        file.delete();   // 파일 삭제
+                    }
+                    // 기존 첨부파일이 없을 때
+                    fileupload( boardDto, boardEntity ); // 업로드 함수 실행
+                }
+            }
+
             // * 수정 처리 [ 메소드별도 존재x ] 엔티티 객체 자체를 수정 [ entity <-매핑-> dto ]
-            entity.setBtitle( boardDto.getBtitle() );
-            entity.setBcontent( boardDto.getBcontent() );
+            boardEntity.setBtitle( boardDto.getBtitle() );
+            boardEntity.setBcontent( boardDto.getBcontent() );
             return true;
         }else {
             return false;

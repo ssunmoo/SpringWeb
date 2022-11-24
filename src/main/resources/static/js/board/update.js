@@ -18,18 +18,18 @@ function getboard(){
 
 // 3. 수정버튼 클릭 시 호출되는 메소드
 function upboard(){
-    let data = {
-            btitle : document.querySelector('.btitle').value,
-            bcontent : document.querySelector('.bcontent').value,
-            bfile : document.querySelector('.bfile').value,
-            bno : bno // 수정할 대상
-        }
-    console.log( data );
+
+    let boardupdate = document.querySelector('.boardupdate')
+    let formdata = new FormData( boardupdate );
+    formdata.set("bno", bno );
+
+    console.log( formdata );
     $.ajax({
          url        : "/board/upboard",
          type       : "put",
-         data       : JSON.stringify( data ),   // 객체로 통신하기 위해
-         contentType: "application/json",       // 전송 타입 : application/json
+         data       : formdata,   // 객체로 통신하기 위해
+        contentType: false, // multipart 전송방법 2
+        processData: false, // multipart 전송방법 3
          success    : re => {
             if( re == true ){
                 alert("글 수정 성공");

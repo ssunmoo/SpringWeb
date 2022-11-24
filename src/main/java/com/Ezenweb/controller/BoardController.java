@@ -73,7 +73,6 @@ public class BoardController {
     // 1. 게시물 작성 [ 첨부파일  ]
     @PostMapping("/setboard")
     public boolean setboard( BoardDto boardDto ){
-        System.out.println( "컨트롤러 디티오 화긴 :: "+ boardDto.toString() );
         return boardService.setboard( boardDto );
     }
 
@@ -92,17 +91,16 @@ public class BoardController {
     public boolean delboard( @RequestParam("bno") int bno ){
         return boardService.delboard( bno );
     }
-    // 5. 게시물 수정 [ 첨부파일 ]
+
+    // 5. 게시물 수정
     @PutMapping("/upboard")
-    public boolean upboard( @RequestBody BoardDto boardDto ){
-        System.out.println(" 컨트롤 수정::"+boardDto);
+    public boolean upboard( BoardDto boardDto ){
         return boardService.upboard( boardDto );
     }
 
     // 6. 카테고리 등록
     @PostMapping("/setbcategory")
     public boolean setbcategory( @RequestBody BcategoryDto bcategoryDto ){
-        System.out.println("컨트롤러 ::: " + bcategoryDto);
         return boardService.setbcategory( bcategoryDto );
     }
 
@@ -117,6 +115,22 @@ public class BoardController {
     public void filedownload( @RequestParam("filename") String filename ){
         boardService.filedownload( filename );
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // -------------------------------- 비회원제 게시판 ---------------------------------

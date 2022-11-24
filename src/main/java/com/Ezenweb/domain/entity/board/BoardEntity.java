@@ -57,6 +57,7 @@ public class BoardEntity extends BaseEntity {
                 .bcontent( this.bcontent)
                 .bview( this.bview )
                 .memail( this.memberEntity.getMemail() )
+                .bfilename( this.bfile ) // 파일명만 함께 보내기
                 .build();
     }
 }

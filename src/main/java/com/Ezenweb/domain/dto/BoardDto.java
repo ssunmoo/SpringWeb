@@ -15,7 +15,8 @@ public class BoardDto {
     private String btitle;      // 제목
     private String bcontent;    // 내용
     private int bview;          // 조회수
-    private MultipartFile bfile;// 파일
+    private MultipartFile bfile;// 첨부파일 객체 [ 업로드용 ]
+    private String bfilename;   // 첨부파일 [ 출력용 ]
     private int mno;            // 작성자 회원번호 FK
     private int bcno;           // 카테고리 FK
     private String memail;      // 회원 아이디

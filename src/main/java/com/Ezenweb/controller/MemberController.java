@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000") // 요청 포트 변경 어노테이션
 @RestController // 해당 클래스가 컨트롤임을 명시 [ RestFul api 사용 ]
 @RequestMapping("/member") // 공통 URL 매핑 주소
 public class MemberController {

@@ -15,10 +15,10 @@
     <div class="bcategorytbox">
     </div>
     <br>
-    <form>
-        제목 : <input type="text" class="btitle"> <br>
-        내용 : <input type="text" class="bcontent"> <br>
-        첨부파일 : <input type="file" class="bfile"> <br>
+    <form class="boardform">
+        제목 : <input type="text" class="btitle" name ="btitle"> <br>
+        내용 : <input type="text" class="bcontent" name="bcontent"> <br>
+        첨부파일 : <input type="file" class="bfile" name="bfile"> <br>
         <button type="button" onclick="setboard()"> 등록 </button>
     </form>
     <br>
@@ -33,6 +33,6 @@
 
 
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="/static/js/board/write.js"></script>
+    <script src="/js/board/write.js"></script>
 </body>
 </html>

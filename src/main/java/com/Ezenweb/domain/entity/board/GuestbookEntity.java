@@ -26,6 +26,7 @@ public class GuestbookEntity {
     @Column( nullable = false )
     private String gbname;
 
+    private String gbfile;  // 첨부파일
 
         // 연관관계
         @ManyToOne

@@ -19,9 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service // 컴포넌트 [ 스프링이 mvc 관리 할 수 있도록 ]
@@ -39,6 +43,9 @@ public class BoardService {
     private HttpServletRequest request; // 3. 세션 요청 객체 선언
 
     @Autowired
+    private HttpServletResponse response; // 4. 리스폰 선언
+    
+    @Autowired
     private BcategoryRepository bcategoryRepository;
 
     @Autowired
@@ -50,13 +57,57 @@ public class BoardService {
     @Autowired
     private GuestbookCgRepository guestbookCgRepository; // 비회원게시판 카테고리 리포지토리
 
+    // [ 첨부파일 경로 ]
+    String path = "C:\\Users\\504\\IdeaProjects\\SpringWeb\\src\\main\\resources\\bupload\\";
 
     // --------------------------- 2. 서비스 ----------------------------------------------
 
-    // 1. 게시물 작성 [ 첨부파일 ]
+    // 0. 첨부파일 다운로드
+    public void filedownload( String filename ){
+
+        // ** UUID 제거
+        String realfilename = "";
+        String [] split = filename.split("_"); // 1. 앞 언더바(_) 기준으로 자르기
+        for( int i = 1; i < split.length; i++ ){     // 2. uuid 제와한 반복문 돌리기 1번째 인덱스부터
+            realfilename += split[i];                // 3. 뒷자리 문자열 추가
+            if ( split.length-1 != i ){              // 4. 마지막 인덱스가 아니면
+                realfilename += "_";                 // 5. 문자열[1]_문자열[2]_문자열[3]
+            }
+        }
+
+        // 1. 경로 찾기
+        String filepath = path + filename;
+        // 2. 헤더 구성 [ HTTP 에서 지원하는 다운로드 형식 메소드 response ]
+        try {
+            response.setHeader(
+                    "Content-Disposition",  // 다운로드 형식의 이름 [ 브라우저마다 다르며 정해져있음 ]
+                    "attachment;filename=" + URLEncoder.encode( realfilename, "UTF-8")); // 다운로드에 표시된 파일명
+
+            File file = new File( filepath ); // 해당 경로의 파일 객체화
+            // 3. 다운로드 스트림
+            // 3-1. 입력 스트림 객체 선언
+            BufferedInputStream inputStream = new BufferedInputStream( new FileInputStream( file ) );
+            // 3-2. 파일의 길이만큼 배열 선언
+            byte[] bytes = new byte[ (int) file.length()];
+            // 3-3. 파일의 길이만큼 읽어와서 바이트 배열에 저장
+            inputStream.read( bytes ); // * 스트림 읽기
+            // 4. 출력 스트림
+            BufferedOutputStream outputStream = new BufferedOutputStream( response.getOutputStream() );
+            // 5. 응답하기 [ 내보내기 ]
+            outputStream.write( bytes ); // * 스트림 내보내기
+            // 6. 버퍼 초기화 & 스트림 닫기
+            outputStream.flush(); // 초기화
+            outputStream.close();
+            inputStream.close();
+
+        } catch (Exception e) {
+            System.out.println("첨부파일 다운로드 실패 : " + e);
+        }
+    }
+
+    // 1. 게시물 작성
     @Transactional
     public boolean setboard( BoardDto boardDto ){
-
         // 1. 회원 정보 가져오기
         MemberEntity memberEntity = memberService.getEntity();
         if( memberEntity == null ) {
@@ -69,12 +120,34 @@ public class BoardService {
             return false;
         }
         BcategoryEntity bcategoryEntity = optional.get(); // dto -> entity [ INSERT ]
-        System.out.println("선택한 카테고리번호 2 "+ bcategoryEntity );
         // 3. dto -> entity [ INSERT ] 반환 저장된 entity 반환
         BoardEntity boardEntity = boardRepository.save( boardDto.toEntity() ); // 클래스명.메소드명(); -> 메소드가 static 일때만 가능
-
+        System.out.println("asd" +boardEntity.getBno() );
         if( boardEntity.getBno() != 0 ){ // 4. 생성된 entity의 게시물 번호가 0이 아니면 성공
 
+            if( boardDto.getBfile() != null ){
+                // ** 업로드된 파일의 이름 [ ** 문제점 : 파일 명 중복 ]
+                String uuid = UUID.randomUUID().toString(); // 난수 생성
+                String filename = uuid+"_"+boardDto.getBfile().getOriginalFilename(); // 2. 난수+파일명
+
+                // ** 첨부 파일명 DB 등록
+                boardEntity.setBfile( filename ); // 3. 난수+파일명 엔티티에 저장
+
+                // ** 업로드
+                try {
+                    // 4. 경로 + 파일명 [ 객체화 ]
+                    File uploadfile = new File(path+filename);
+                    boardDto.getBfile().transferTo( uploadfile ); // 5. 해당 경로로 업로드
+                } catch (IOException e) {
+                    System.out.println("첨부파일 업로드 실패");
+                }
+            }
+
+            // 파일명 중복 안되게 설정 하기
+            // 1. pk + 파일명
+            // 2. uuid + 파일명 [ UUID : 범용 고유 식별자 클래스 UUID.randomUUID().toString()]
+            // 3. 업로드 날짜/시간 + 파일명
+            // 4. 중복된 파일 명 중 최근 파일명 뒤에 파일명 +(중복 수+1)
             // 1. 회원 <-> 게시물 연관관계 대입
             boardEntity.setMemberEntity( memberEntity ); // FK 대입
             // 양방향 [ PK 필드에 FK 연결 ]
@@ -151,7 +224,6 @@ public class BoardService {
             // * 수정 처리 [ 메소드별도 존재x ] 엔티티 객체 자체를 수정 [ entity <-매핑-> dto ]
             entity.setBtitle( boardDto.getBtitle() );
             entity.setBcontent( boardDto.getBcontent() );
-            entity.setBfile( boardDto.getBfile() );
             return true;
         }else {
             return false;
@@ -201,97 +273,7 @@ public class BoardService {
 
     }
 
-    // -------------------------------- 비회원제 게시판 ---------------------------------
-    // 8. 방명록 작성
-    @Transactional
-    public boolean setguestbook( GuestbookDto guestbookDto ){
-        System.out.println("guestbookDto.getGbcno() :: "+guestbookDto.getGbcno());
-        // 카테고리 번호 불러오기
-        Optional< GuestbookCgEntity > optional = guestbookCgRepository.findById( guestbookDto.getGbcno() );
 
-        System.out.println("서비스 optional :: "+optional);
-        if( !optional.isPresent() ){
-            System.out.println("optional 없다");
-            return false;
-        }
-        GuestbookCgEntity gbCgEntity = optional.get(); // FK에 넣어줄 값 가지고있기
-        System.out.println("서비스 gbCgEntity :: "+gbCgEntity);
-        
-        // 입력된 내용 엔티티에 저장하기
-        GuestbookEntity guestbookEntity = guestbookRepository.save( guestbookDto.toGuestbookEntity());
-        System.out.println("서비스 guestbookEntity :: "+guestbookEntity);
-        if ( guestbookEntity.getGbno() != 0 ){ // 게시물 번호가 0이 아니면 성공
-            guestbookEntity.setGuestbookCgEntity( gbCgEntity ); // FK에 데이터 넣어주기
-            gbCgEntity.getGuestbookEntityList().add( guestbookEntity );
-            return true;
-        }else {
-            return false; // 0이면 실패
-        }
-    }
-
-    // 9. 방명록 출력
-    @Transactional
-    public List< GuestbookDto > getguestbook( int gbcno ){
-        List< GuestbookEntity > gbEntities = null;
-
-        if( gbcno == 0 ){
-            gbEntities = guestbookRepository.findAll(); // 0이면 전체보기
-        }else { // 카테고리별보기
-            GuestbookCgEntity gbCgEntity = guestbookCgRepository.findById( gbcno ).get(); // 선택된 카테고리 번호 가져와서 저장
-            gbEntities = gbCgEntity.getGuestbookEntityList(); // 해당 엔티티의 게시물 목록 호출
-        }
-        List< GuestbookDto > guestbookDtos = new ArrayList<>();
-        for( GuestbookEntity entity : gbEntities){
-            guestbookDtos.add( entity.toGuestbookDto() );
-        }
-        return guestbookDtos;
-    }
-
-    // 10. 방명록 카테고리 등록
-    @Transactional
-    public boolean setgustcategory( GuestbookCgDto guestbookCgDto ){
-        GuestbookCgEntity gbCgEntity = guestbookCgRepository.save( guestbookCgDto.togbcEntity());
-        return true;
-    }
-
-    // 11. 방명록 카테고리 출력
-    @Transactional
-    public List< GuestbookCgDto > getgustcategorylist(){
-        List < GuestbookCgEntity > entityList = guestbookCgRepository.findAll();
-        List < GuestbookCgDto > guestbookCgDtos = new ArrayList<>();
-        for( GuestbookCgEntity entity : entityList ){
-            guestbookCgDtos.add( entity.togbcDto() );
-        }
-        return guestbookCgDtos;
-    }
-
-    // 12. 방명록 게시글 수정
-    @Transactional
-    public boolean gbupdate( GuestbookDto guestbookDto ){
-        Optional < GuestbookEntity > optional = guestbookRepository.findById( guestbookDto.getGbno() ); // 게시물번호 가져오기
-
-        if( optional.isPresent() ){ // 게시글 번호가 존재할 경우
-            GuestbookEntity gbentity = optional.get();
-            gbentity.setGbcontent( guestbookDto.getGbcontent() );
-            gbentity.setGbname( guestbookDto.getGbname() );
-            return true;
-        }else {
-            return false;
-        }
-    }
-
-    // 13. 방명록 게시글 삭제
-    @Transactional
-    public boolean gbdelete (int gbno ){
-        Optional < GuestbookEntity > optional = guestbookRepository.findById( gbno );
-        if ( optional.isPresent() ){
-            GuestbookEntity entity = optional.get(); // 선택된 게시글
-            guestbookRepository.delete( entity ); // 리포지토리에서 삭제해줘
-            return true;
-        }else {
-            return false;
-        }
-    }
 
 
 

@@ -27,15 +27,15 @@ public class GuestbookEntity {
     private String gbname;
 
 
-    // 연관관계
-    @ManyToOne
-    @JoinColumn(name = "gbcno") // db 명시 필드
-    @ToString.Exclude
-    private GuestbookCgEntity guestbookCgEntity;
+        // 연관관계
+        @ManyToOne
+        @JoinColumn(name = "gbcno") // db 명시 필드
+        @ToString.Exclude
+        private GuestbookCgEntity guestbookCgEntity;
 
 
 
-    public GuestbookDto toGuestbookDto() { // 뷰에서 입력 받은 내용
+        public GuestbookDto toGuestbookDto() { // 뷰에서 입력 받은내용
         return GuestbookDto.builder()
                 .gbno( this.gbno )
                 .gbcontent( this.gbcontent )

@@ -21,6 +21,12 @@ public class BoardDto {
     private int bcno;           // 카테고리 FK
     private String memail;      // 회원 아이디
 
+    // 페이징 처리
+    private int startbtn;
+    private int endbtn;
+
+
+
     public BoardEntity toEntity() {
         // * 생성자를 사용한 객체 생성
         return BoardEntity.builder()

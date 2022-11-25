@@ -37,7 +37,7 @@ public class GuestbookService {
 
 
     // [ 첨부파일 경로 ]
-    String path = "C:\\Users\\504\\IdeaProjects\\SpringWeb\\src\\main\\resources\\gbuploadimg\\";
+    String path = "C:\\Users\\504\\IdeaProjects\\SpringWeb\\src\\main\\resources\\static\\gbuploadimg\\";
 
     // -------------------------------- 비회원제 게시판 ---------------------------------
     // 1. 방명록 작성

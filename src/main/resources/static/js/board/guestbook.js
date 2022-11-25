@@ -111,6 +111,7 @@ function gbupdatebtn( bno ){
     document.querySelector('.updatebox').innerHTML = html;
 }
 
+// 게시글 수정
 function gbupdate(){
     let data = {
                 gbcontent : document.querySelector('.gbcontent2').value,
@@ -134,7 +135,7 @@ function gbupdate(){
     })
 }
 
-
+// 게시글 삭제
 function gbdelete( gbno ){
 console.log( "삭제 gbno : " + gbno );
     $.ajax({

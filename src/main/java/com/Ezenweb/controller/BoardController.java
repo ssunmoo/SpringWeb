@@ -78,8 +78,13 @@ public class BoardController {
 
     // 2. 게시물 목록 조회 [ 페이징, 검색 ]
     @GetMapping("/boardlist")
-    public List< BoardDto > boardlist( @RequestParam("bcno") int bcno ){
-        return boardService.boardlist( bcno );
+    public List< BoardDto > boardlist(
+            @RequestParam("bcno") int bcno, // 카테고리 번호
+            @RequestParam("page") int page, // 현재 페이지 번호
+            @RequestParam("key") String key, // 검색할 필드명
+            @RequestParam("keyword") String keyword // 검색할 필드내 검색 데이터
+        ){
+        return boardService.boardlist( bcno, page, key, keyword );
     }
     // 3. 게시물 개별 조회
     @GetMapping("/getboard")

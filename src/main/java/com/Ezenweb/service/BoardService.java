@@ -16,6 +16,10 @@ import com.Ezenweb.domain.entity.member.MemberEntity;
 import com.Ezenweb.domain.entity.member.MemberRepository;
 import org.hibernate.metamodel.model.domain.internal.MapMember;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service // 컴포넌트 [ 스프링이 mvc 관리 할 수 있도록 ]
@@ -59,7 +60,7 @@ public class BoardService {
     private GuestbookCgRepository guestbookCgRepository; // 비회원게시판 카테고리 리포지토리
 
     // [ 첨부파일 경로 ]
-    String path = "C:\\Users\\504\\IdeaProjects\\SpringWeb\\src\\main\\resources\\bupload\\";
+    String path = "C:\\Users\\504\\IdeaProjects\\SpringWeb\\src\\main\\resources\\static\\bupload\\";
 
     // --------------------------- 2. 서비스 ----------------------------------------------
 
@@ -166,16 +167,42 @@ public class BoardService {
 
 
     // 2. 게시물 목록 조회 [ 페이징, 검색 ]
-    @Transactional
-    public List< BoardDto > boardlist( int bcno ){
-        List< BoardEntity > elist = null;
+    @Transactional              // bcno, 카테고리번호 / page 현재 페이지 번호
+    public List< BoardDto > boardlist( int bcno, int page, String key, String keyword){
         
-        if( bcno == 0 ){ // 1. 카테고리 번호가 0 이면 전체보기
-            elist = boardRepository.findAll(); // 모든 엔티티 호출
-        }else{ // 카테고리 번호가 0이 아니면 선택된 카테고리별 보기
-            BcategoryEntity bcEntity = bcategoryRepository.findById( bcno ).get();
-            elist = bcEntity.getBoardEntityList(); // 해당 엔티티의 게시물 목록 호출
+        Page< BoardEntity > elist = null; // 1. 페이징 처리된 entity 객체 생성
+        Pageable pageable = PageRequest.of( page-1, 3, Sort.by( Sort.Direction.DESC, "bno")); // 2. 페이징 설정 시작 : 0부터
+        
+        // 3. 검색 여부 판단
+        if( key.equals("btitle")){          // 검색 필드가 제목이면
+            // 1. 검색 시 : [조건1 : 제목 검색 , 조건2 : 카테고리 검색]
+            elist = boardRepository.findBybtitle( bcno, keyword, pageable );
+        } else if (key.equals("bcontent")) { // 검색 필드가 내용이면
+            // 2. 검색 시 : [조건1 : 제목 검색 , 조건2 : 카테고리 검색]
+            elist = boardRepository.findBybcontent( bcno, keyword, pageable );
+        } else { // 3. 검색이 없으면
+            if( bcno == 0 ){
+                elist = boardRepository.findAll( pageable ); // 전체 검색
+            } else {
+                elist = boardRepository.findBybcno( bcno, pageable ); // 카테고리 검색
+            }
         }
+        // 프론트엔드에 표시할 페이징 번호 버튼 수
+        int btncount = 5;                               // 1. 페이지에 표시할 총 페이지 버튼 개수 [ 5개씩 표시 ]
+        int startbtn = ( page/btncount ) * btncount +1; // 2. 시작번호 버튼
+        int endbtn = startbtn + btncount-1;             // 3. 마지막번호 버튼
+        if( endbtn > elist.getTotalPages() ) endbtn = elist.getTotalPages();
+
+        // ** 검색 페이징된 결과 확인 **
+        System.out.println("엔티티들 : " + elist );
+        System.out.println("총엔티티수 : " + elist.getTotalElements() );
+        System.out.println("총페이지수 : " + elist.getTotalPages() );
+        System.out.println("현재페이지수 : " + elist.getNumber() );
+        System.out.println("현재 엔티티 객체정보 : " + elist.getContent() );
+        System.out.println("현재 페이지의 게시물수 : " + elist.getNumberOfElements() );
+        System.out.println("현재 페이지가 첫페이지인지 여부확인 : " + elist.isFirst() );
+        System.out.println("현재 페이지가 마지막인지 여부확인 : " + elist.isLast() );
+
 
         // 2. 컨트롤에게 전달할때 형변환하기 entity -> dto로 변경
         List< BoardDto > dlist = new ArrayList<>(); // 메모리 할당
@@ -183,8 +210,27 @@ public class BoardService {
         for( BoardEntity entity : elist ){
             dlist.add( entity.toDto() );
         }
+
+        dlist.get(0).setStartbtn( startbtn );
+        dlist.get(0).setEndbtn( endbtn );
+
         // 4. dto로 변환된 dlist 반환
         return dlist;
+
+        //        if( bcno == 0 ){ // 1. 카테고리 번호가 0 이면 전체보기
+//            elist = boardRepository.findAll( pageable ); // 모든 엔티티 호출
+//        }
+//          // 2. 카테고리 번호가 0이 아니면 선택된 카테고리별 보기
+//        else{
+//            // 1. 페이징 처리 전
+////          BcategoryEntity bcEntity = bcategoryRepository.findById( bcno ).get();
+////          elist = bcEntity.getBoardEntityList(); // 해당 엔티티의 게시물 목록 호출
+//
+//            // 2. 페이징 처리 후
+//            elist = boardRepository.findBybcno( bcno, pageable );
+//        }
+//        System.out.println("전체 페이지 수 " + elist.getTotalPages());
+//        System.out.println("전체 게시물 수 " + elist.getTotalElements());
     }
 
     // 3. 게시물 개별 조회

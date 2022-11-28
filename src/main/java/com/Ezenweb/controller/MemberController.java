@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000") // 요청 포트 변경 어노테이션
+@CrossOrigin(origins = "http://localhost:3000") // 리액트와 연결하기 위한 리액트 포트번호
 @RestController // 해당 클래스가 컨트롤임을 명시 [ RestFul api 사용 ]
 @RequestMapping("/member") // 공통 URL 매핑 주소
 public class MemberController {
@@ -63,12 +63,12 @@ public class MemberController {
         return result;
     }
 
-    // 2. 로그인 기능
-    @PostMapping("/getmember")
-    public int getmember( @RequestBody MemberDto memberDto ){
-        int result = memberService.getmember( memberDto );
-        return result;
-    }
+//    // 2. 로그인 기능 [ 시큐리티 사용 시 필요 x ]
+//    @PostMapping("/getmember")
+//    public int getmember( @RequestBody MemberDto memberDto ){
+//        int result = memberService.getmember( memberDto );
+//        return result;
+//    }
 
     // 3. 비밀번호 찾기 기능
     @GetMapping("/getpw")

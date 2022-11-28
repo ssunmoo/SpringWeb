@@ -65,29 +65,29 @@ public class MemberService {
         return entity.getMno();
     } // setmember e
 
-    // 2. 로그인
-    @Transactional
-    public int getmember(MemberDto memberDto) {
-        // dao 처리 [ select ]
-
-        // 1. 모든 엔티티 호출 [ select * from member 이랑 같음 ]
-        List<MemberEntity> entityList = memberRepository.findAll();
-
-        // 2. 입력 받은 데이터와 일치 값 찾기
-        for (MemberEntity entity : entityList) { // entityList 을 돌려서 entity 변수에 담기
-            if (entity.getMemail().equals(memberDto.getMemail())) { // 해당 레코드랑 입력받은 이메일이 같으면
-                if (entity.getMpw().equals(memberDto.getMpw())) { // 비밀번호도 같으면
-                    // [세션 부여] 로그인 성공 시 loginMno 라는 이름으로 세션 저장
-                    request.getSession().setAttribute("loginMno" , entity.getMno() );
-                                                        // 엔티티 = 레코드 = 로그인 성공한 객체의 회원번호
-                    return 1; // 1: 로그인 성공
-                } else {
-                    return 2; // 2. 패스워드 틀림 [ 아이디 중복 구현안했지만 없다는 전제조건 ]
-                }
-            }
-        }
-        return 0; // 0 : 로그인 실패 [ 아이디 없음 ]
-    } // getmember e
+//    // 2. 로그인 [ 시큐리티 사용 시 필요 x ]
+//    @Transactional
+//    public int getmember(MemberDto memberDto) {
+//        // dao 처리 [ select ]
+//
+//        // 1. 모든 엔티티 호출 [ select * from member 이랑 같음 ]
+//        List<MemberEntity> entityList = memberRepository.findAll();
+//
+//        // 2. 입력 받은 데이터와 일치 값 찾기
+//        for (MemberEntity entity : entityList) { // entityList 을 돌려서 entity 변수에 담기
+//            if (entity.getMemail().equals(memberDto.getMemail())) { // 해당 레코드랑 입력받은 이메일이 같으면
+//                if (entity.getMpw().equals(memberDto.getMpw())) { // 비밀번호도 같으면
+//                    // [세션 부여] 로그인 성공 시 loginMno 라는 이름으로 세션 저장
+//                    request.getSession().setAttribute("loginMno" , entity.getMno() );
+//                                                        // 엔티티 = 레코드 = 로그인 성공한 객체의 회원번호
+//                    return 1; // 1: 로그인 성공
+//                } else {
+//                    return 2; // 2. 패스워드 틀림 [ 아이디 중복 구현안했지만 없다는 전제조건 ]
+//                }
+//            }
+//        }
+//        return 0; // 0 : 로그인 실패 [ 아이디 없음 ]
+//    } // getmember e
 
     // 3. 비밀번호 찾기
     @Transactional

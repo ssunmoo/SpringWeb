@@ -1,4 +1,4 @@
-// 로그인
+// 비밀번호 찾기
 function getpw(){
     let memail = document.querySelector('.memail').value
 

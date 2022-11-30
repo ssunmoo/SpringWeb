@@ -36,9 +36,10 @@ public class MemberEntity extends BaseEntity { // 베이스엔티티 상속받�
     @OneToMany( mappedBy = "memberEntity" ) // 1:N PK쪽에 사용하는 어노테이션 , mappedBy="fk필드명"
     @Builder.Default // 빌더 사용 시 해당 필드의 초기값 설정
     private List<BoardEntity> boardEntityList = new ArrayList<>();
-    // 2. 생성자
 
-    // 3. 메소드
+    @Column // 회원등급
+    private String role;
+
 
     // * 엔티티 --> Dto
     public MemberDto toDto(){

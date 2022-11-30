@@ -1,16 +1,52 @@
 package com.Ezenweb.config;
 
 
+import com.Ezenweb.service.MemberService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfigration extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private MemberService memberService;
+
+    // 로그인 인증 관련 메소드 정의 [ 토큰 생성 ] 후 서비스에 전달
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService( memberService ).passwordEncoder(new BCryptPasswordEncoder());
+    }
+
     @Override // 재정의 : 상속 받은 클래스로부터 메소드 구현
     protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http); // 주석처리하면 인증 다 풀림
+        // super.configure(http); // 주석처리하면 인증 다 풀림
+        http
+                .formLogin()    // 로그인 페이지 보안 설정
+                    .loginPage("/member/login") // 아이디와 비밀번호를 입력 받을 페이지 URL
+                    .loginProcessingUrl("/member/getmember") // 로그인을 처리할 URL
+                    .defaultSuccessUrl("/") // 로그인 성공 시 이동할 URL
+                    .failureUrl("/member/login") // 로그인 실패 시 이동할 URL [다시 로그인 하도록 로그인 페이지]
+                    .usernameParameter("memail") // 입력 받을 아이디 변수명
+                    .passwordParameter("mpw")  // 입력 받을 비밀번호 변수명
+                    .and()
+
+                .logout() // 로그아웃 설정
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout")) // 로그아웃 처리 URL
+                    .logoutSuccessUrl("/") // 로그아웃 성공 시
+                    .invalidateHttpSession( true ) // 세션 [ principal ] 초기화
+                    .and()
+
+                .csrf() // 요청 위조 방지 설정 [ 해당 주소는 모두 들어갈 수 있게 ]
+                    .ignoringAntMatchers("/member/getmember") // 로그인
+                    .ignoringAntMatchers("/member/setmember"); // 회원가입
+
+
     }
 
 

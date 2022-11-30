@@ -5,10 +5,11 @@
     <title>Title</title>
 </head>
 <body>
-
-    이메일 <input type="text" class="memail"> <br>
-    비밀번호 <input type="text" class="mpw"> <br>
-    <button type="button" onclick="getmember()"> 확인 </button>
+    <form method="post" action="/member/getmember"> <!-- action : 시큐리티 로그인 처리 경로랑 경로랑 동일하게 -->
+        이메일 <input type="text" class="memail" name="memail"> <br>
+        비밀번호 <input type="text" class="mpw" name="mpw"> <br>
+        <input type="submit" value="로그인">
+    </form>
 
     <br><br>
     <a href="/"> <button type="button"> 메인페이지 </button> </a>

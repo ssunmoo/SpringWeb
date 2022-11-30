@@ -93,16 +93,16 @@ public class MemberController {
 
     // 6. 로그인 확인
     @GetMapping("/getloginMno")
-    public int getloginMno(){
-        int result = memberService.getloginMno();
+    public String getloginMno(){
+        String result = memberService.getloginMno();
         return result;
     }
 
-    // 7. 로그아웃
-    @GetMapping("/logout") // 7. 로그아웃
-    public void logout(){
-        memberService.logout();
-    }
+//    // 7. 로그아웃
+//    @GetMapping("/logout") // 7. 로그아웃
+//    public void logout(){
+//        memberService.logout();
+//    }
 
     // 8. 회원목록
     @GetMapping("/list") // 8. 회원 목록

@@ -27,10 +27,10 @@ public class MemberEntity extends BaseEntity { // 베이스엔티티 상속받�
     @Column(nullable = false)   // not null
     private String memail;      // 회원 이메일 = 아이디 필드
 
-    @Column(nullable = false)   // not null
+    @Column
     private String mpw;         // 회원 비밀번호 필드
 
-    @Column(nullable = false)   // not null
+    @Column
     private String mphone;      // 회원 전화번호 필드
 
     @OneToMany( mappedBy = "memberEntity" ) // 1:N PK쪽에 사용하는 어노테이션 , mappedBy="fk필드명"

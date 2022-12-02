@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -21,13 +20,15 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService( memberService ).passwordEncoder(new BCryptPasswordEncoder());
+        // memservice 에서 UserDetailsService 구현했기 때문에 가능
     }
 
     @Override // 재정의 : 상속 받은 클래스로부터 메소드 구현
     protected void configure(HttpSecurity http) throws Exception {
         // super.configure(http); // 주석처리하면 인증 다 풀림
         http
-                .formLogin()    // 로그인 페이지 보안 설정
+                // 일반 로그인 보안 설정
+                .formLogin()
                     .loginPage("/member/login") // 아이디와 비밀번호를 입력 받을 페이지 URL
                     .loginProcessingUrl("/member/getmember") // 로그인을 처리할 URL
                     .defaultSuccessUrl("/") // 로그인 성공 시 이동할 URL
@@ -36,15 +37,25 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .passwordParameter("mpw")  // 입력 받을 비밀번호 변수명
                     .and()
 
-                .logout() // 로그아웃 설정
+                // 로그아웃 설정
+                .logout()
                     .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout")) // 로그아웃 처리 URL
                     .logoutSuccessUrl("/") // 로그아웃 성공 시
                     .invalidateHttpSession( true ) // 세션 [ principal ] 초기화
                     .and()
 
-                .csrf() // 요청 위조 방지 설정 [ 해당 주소는 모두 들어갈 수 있게 ]
+                // 요청 위조 방지 설정 [ 해당 주소는 모두 들어갈 수 있게 ]
+                .csrf()
                     .ignoringAntMatchers("/member/getmember") // 로그인
-                    .ignoringAntMatchers("/member/setmember"); // 회원가입
+                    .ignoringAntMatchers("/member/setmember") // 회원가입
+                    .and()
+
+                // SNS 로그인 보안 설정
+                .oauth2Login()
+                    .defaultSuccessUrl("/") // 로그인 성공 시 이동할 URL
+                    .userInfoEndpoint() // Endpoint[종착점] : 소셜 회원 정보가 들어오는 곳
+                    .userService( memberService ); // 해당 서비스 loadUser 메소드 구현
+
 
 
     }

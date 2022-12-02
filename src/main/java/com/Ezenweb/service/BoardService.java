@@ -148,6 +148,7 @@ public class BoardService {
         BcategoryEntity bcategoryEntity = optional.get(); // dto -> entity [ INSERT ]
         // 3. dto -> entity [ INSERT ] 반환 저장된 entity 반환
         BoardEntity boardEntity = boardRepository.save( boardDto.toEntity() ); // 클래스명.메소드명(); -> 메소드가 static 일때만 가능
+
         if( boardEntity.getBno() != 0 ){ // 4. 생성된 entity의 게시물 번호가 0이 아니면 성공
             fileupload( boardDto, boardEntity ); // 업로드 함수 실행
 

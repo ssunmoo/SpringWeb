@@ -11,28 +11,32 @@ import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Signup from "./member/Signup";
+import Login from "./member/Login";
+import BoardList from "./board/BoardList";
 
 // 라우터 설치 [ 터미널 ] npm i react-router-dom
-import { BrowserRouter, Routes, Route, Link, Router } from 'react-router-dom';
+import { HashRouter, BrowserRouter, Routes, Route, Link, Router } from 'react-router-dom';
+import Home from "./Home";
 // BrowserRouter :
 // Routes : Route 목록/리스트
 // Route : 가상 URL 만들기 --> 해당 URL에 따른 컴포넌트 렌더링 [ SPA ]
 // Link : <--> a 태그 : 하이퍼링크
 // Router :
 
-export default function Index(){
+export default function Index( props ){
     return (
-        <div>
-            < BrowserRouter>
-
+        <div className="webbox">
+            <BrowserRouter>
                 <Header/>
-                   <h3>메인페이지</h3>
-                <Footer/>
+
                 <Routes>
-                    <Route path="/" />
-                    <Route path="/member/signup" element={ <Signup/> } />
+                    <Route path="/" element={<Home />} />
+                    <Route path="/member/signup" element={ <Signup /> } />
+                    <Route path="/member/login" element={ <Login /> } />
+                    <Route path="/board/list" element={ <BoardList /> } />
                 </Routes>
 
+                <Footer/>
             </BrowserRouter>
         </div>
     );

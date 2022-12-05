@@ -29,8 +29,8 @@ public class BoardController {
     private GuestbookService guestbookService;
 
 
-    // --------------------------- 2. 페이지 요청 [view] ------------------------------------
-    
+/*    // --------------------------- 2. 페이지 요청 [view] ------------------------------------
+
     // 1. 게시판 전체 페이지 열기
     @GetMapping("/list") // URL : localhost:8080/board/list 주소를 입력 시 해당 html 반환
     public Resource getlist(){
@@ -56,8 +56,7 @@ public class BoardController {
     @GetMapping("/guestbook")
     public Resource getguest(){
         return new ClassPathResource("templates/board/guestbook.html");
-    }
-
+    }*/
 
     // --------------------------- 3. 요청과 응답 [model] -----------------------------------
     

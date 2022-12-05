@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000") // 리액트와 연결하기 위한 리액트 포트번호
+//@CrossOrigin(origins = "http://localhost:3000") // 리액트와 연결하기 위한 리액트 포트번호
 @RestController // 해당 클래스가 컨트롤임을 명시 [ RestFul api 사용 ]
 @RequestMapping("/member") // 공통 URL 매핑 주소
 public class MemberController {
@@ -18,7 +18,7 @@ public class MemberController {
     @Autowired // 제어 역전 [DI] 스프링 컨테이너 빈 생성 [ 외부에 메모리 위임 ]
     private MemberService memberService;
 
-    // -------------------------------- HTML 반환 매핑 --------------------------------
+/*    // -------------------------------- HTML 반환 매핑 --------------------------------
 
     // 1. 회원가입 페이지 열기
     @GetMapping("/signup")
@@ -49,8 +49,7 @@ public class MemberController {
     @GetMapping("/update")
     public Resource updatepw() {
         return new ClassPathResource("templates/member/update.html");
-    }
-
+    }*/
 
     // -------------------------------- 서비스/기능 매핑 ------------------------------------
 

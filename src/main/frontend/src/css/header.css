@@ -1,8 +1,40 @@
+a{
+    outline: none;
+    text-decoration: none;
+    color: #4b4b4b;
+}
+
 .header-name{
     color: darkslateblue;
 }
 
 .logo{
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
+}
+
+.webbox{
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.header{
+    display: flex;
+    justify-content: space-between;
+    height: 120px;
+    border: 1px solid #ccc;
+}
+.header_logo{
+    margin-left: 20px;
+}
+.top_menu{
+    display: flex;
+    list-style:none;
+    font-weight: bold;
+    margin-top: 50px;
+    padding-right: 10px;
+}
+
+.top_menu li{
+    padding-right: 20px;
 }

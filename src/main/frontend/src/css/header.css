@@ -4,6 +4,8 @@ a{
     color: #4b4b4b;
 }
 
+
+
 .header-name{
     color: darkslateblue;
 }
@@ -22,7 +24,6 @@ a{
     display: flex;
     justify-content: space-between;
     height: 120px;
-    border: 1px solid #ccc;
 }
 .header_logo{
     margin-left: 20px;

@@ -21,9 +21,15 @@ function Signup( props ){
         // 3. axios 비동기 통신을 이용한 서버 [ Spring] 통신
         axios
             .post( "http://localhost:8080/member/setmember", info )    // 요청
-            .then( res => {                                                // 응답
-                alert( res.data )
+            .then( res => { // 응답
+                let result = res.data;
+                if( result != 0 ){
+                    alert('회원가입 성공');
+                }else {
+                    alert('회원가입 실패');
+                }
             })
+            .catch( err => { console.log()})
 
     }
     

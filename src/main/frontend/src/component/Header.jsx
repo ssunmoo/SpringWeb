@@ -30,11 +30,24 @@ export default function Header( props ){
                     <Link to="/" > <img src={Logo} className="logo" /> </Link>
                 </div>
                 <ul className="top_menu">
-                    <li> { login } </li>
-                    <li> <Link to="/member/signup" > 회원가입 </Link> </li>
-                    <li> <Link to="/member/login" > 로그인 </Link> </li>
-                    <li> <a href="/member/logout" > 로그아웃 </a> </li>
+                    { login == "" ?
+                        (
+                            <>
+                                <li> <Link to="/member/signup" > 회원가입 </Link> </li>
+                                <li> <Link to="/member/login" > 로그인 </Link> </li>
+                            </>
+                        )
+                        :
+                        (
+                            <>
+                                <li> {login} </li>
+                                <li> <a href="/member/logout" > 로그아웃 </a> </li>
+                                <li> <Link to="/book/list" > 리액트 공부방 </Link> </li>
+                            </>
+                        )
+                    }
                     <li> <Link to="/board/list" > 게시판  </Link></li>
+
                 </ul>
             </div>
         </div>

@@ -20,7 +20,8 @@ function Signup( props ){
         // 비동기 통신 ajax / fetch [리액트 내장] / axios [ 리액트 별도설치 ] 에시오스
         // 3. axios 비동기 통신을 이용한 서버 [ Spring] 통신
         axios
-            .post( "http://localhost:8080/member/setmember", info )    // 요청
+            //.post( "http://localhost:8080/member/setmember", info )    // 요청
+            .post( "/member/setmember", info )    // 요청
             .then( res => { // 응답
                 let result = res.data;
                 if( result != 0 ){

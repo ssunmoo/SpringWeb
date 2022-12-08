@@ -13,11 +13,22 @@ import Footer from "./Footer";
 import Signup from "./member/Signup";
 import Login from "./member/Login";
 import BoardList from "./board/BoardList";
+import Home from "./Home";
+import BoardWrite from "./board/BoardWrite";
+
+// 리액트 공부방 import
+import Library from "../book/chapter3/Library";
+import Clock from "../book/chapter4/Clock";
+import CommentList from "../book/chapter5/CommentList";
+import NotificationList from "../book/chapter6/NotificationList";
+import Accommodate from "../book/chapter7/Accommodate";
+import ConfirmButton2 from "../book/chapter8/ConfirmButton2";
+import LandingPage from "../book/chapter9/LandingPage";
+import BookList from "../book/BookList"
+
 
 // 라우터 설치 [ 터미널 ] npm i react-router-dom
 import { HashRouter, BrowserRouter, Routes, Route, Link, Router } from 'react-router-dom';
-import Home from "./Home";
-import BoardWrite from "./board/BoardWrite";
 // BrowserRouter :
 // Routes : Route 목록/리스트
 // Route : 가상 URL 만들기 --> 해당 URL에 따른 컴포넌트 렌더링 [ SPA ]
@@ -36,6 +47,14 @@ export default function Index( props ){
                     <Route path="/member/login" element={ <Login /> } />
                     <Route path="/board/list" element={ <BoardList /> } />
                     <Route path="/board/write" element={ <BoardWrite /> } />
+                    <Route path="/book/list" element={ <BookList /> } />
+                    <Route path="/book/Library" element={ <Library /> } />
+                    <Route path="/book/Clock" element={ <Clock /> } />
+                    <Route path="/book/CommentList" element={ <CommentList /> } />
+                    <Route path="/book/NotificationList" element={ <NotificationList /> } />
+                    <Route path="/book/Accommodate" element={ <Accommodate /> } />
+                    <Route path="/book/ConfirmButton2" element={ <ConfirmButton2 /> } />
+                    <Route path="/book/LandingPage" element={ <LandingPage /> } />
                 </Routes>
 
                 <Footer/>

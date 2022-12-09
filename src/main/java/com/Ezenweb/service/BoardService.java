@@ -135,14 +135,16 @@ public class BoardService {
     // 1. 게시물 작성
     @Transactional
     public boolean setboard( BoardDto boardDto ){
+        System.out.println("-------서비스dto-------");
+        System.out.println(boardDto.toString());
         // 1. 회원 정보 가져오기
-        MemberEntity memberEntity = memberService.getEntity();
+        MemberEntity memberEntity = memberService.getEntity(); // 시큐리티 적용 전/후 확인
         if( memberEntity == null ) {
             return false;
         }
         // 2. 선택한 카테고리 정보 가져오기 -> 카테고리 엔티티 검색
         Optional< BcategoryEntity> optional = bcategoryRepository.findById( boardDto.getBcno() );
-        if( !optional.isPresent() ){ // 내용물[엔티티]가 없면
+        if( !optional.isPresent() ){ // 내용물[엔티티]가 없으면
             return false;
         }
         BcategoryEntity bcategoryEntity = optional.get(); // dto -> entity [ INSERT ]

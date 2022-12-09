@@ -72,6 +72,7 @@ public class BoardController {
     // 1. 게시물 작성 [ 첨부파일  ]
     @PostMapping("/setboard")
     public boolean setboard( BoardDto boardDto ){
+        System.out.println(boardDto.toString());
         return boardService.setboard( boardDto );
     }
 

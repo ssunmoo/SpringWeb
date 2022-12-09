@@ -48,6 +48,9 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                 .csrf()
                     .ignoringAntMatchers("/member/getmember") // 로그인
                     .ignoringAntMatchers("/member/setmember") // 회원가입
+                    .ignoringAntMatchers("/board/setbcategory") // 회원가입
+                    .ignoringAntMatchers("/board/setboard") // 게시글 작성
+                    .ignoringAntMatchers("/board/boardlist") // 게시글 작성
                     .and()
 
                 // SNS 로그인 보안 설정

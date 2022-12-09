@@ -26,6 +26,12 @@ export default function BookList( props ){
             <button>
                 <Link to="/book/LandingPage" > 챕터9 </Link>
             </button>
+            <button>
+                <Link to="/chapter10/AttendanceBook" > 챕터10 </Link>
+            </button>
+            <button>
+                <Link to="/chapter11/SignUp" > 챕터10 </Link>
+            </button>
         </div>
 
     );

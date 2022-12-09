@@ -25,10 +25,15 @@ import Accommodate from "../book/chapter7/Accommodate";
 import ConfirmButton2 from "../book/chapter8/ConfirmButton2";
 import LandingPage from "../book/chapter9/LandingPage";
 import BookList from "../book/BookList"
+import AttendanceBook from "../book/chapter10/AttendanceBook";
+import SignUp from "../book/chapter11/SignUp";
+
 
 
 // 라우터 설치 [ 터미널 ] npm i react-router-dom
 import { HashRouter, BrowserRouter, Routes, Route, Link, Router } from 'react-router-dom';
+
+
 // BrowserRouter :
 // Routes : Route 목록/리스트
 // Route : 가상 URL 만들기 --> 해당 URL에 따른 컴포넌트 렌더링 [ SPA ]
@@ -55,6 +60,8 @@ export default function Index( props ){
                     <Route path="/book/Accommodate" element={ <Accommodate /> } />
                     <Route path="/book/ConfirmButton2" element={ <ConfirmButton2 /> } />
                     <Route path="/book/LandingPage" element={ <LandingPage /> } />
+                    <Route path="/chapter10/AttendanceBook" element={ <AttendanceBook /> } />
+                    <Route path="/chapter11/SignUp" element={ <SignUp /> } />
                 </Routes>
 
                 <Footer/>

@@ -18,13 +18,11 @@ public class BoardDto {
     private MultipartFile bfile;// 첨부파일 객체 [ 업로드용 ]
     private String bfilename;   // 첨부파일 [ 출력용 ]
     private int mno;            // 작성자 회원번호 FK
+
     private int bcno;           // 카테고리 FK
     private String memail;      // 회원 아이디
 
-    // 페이징 처리
-    private int startbtn;
-    private int endbtn;
-
+    private String bdate;       // 작성일 [ LocalDateTime -> String 출력용 ]
 
 
     public BoardEntity toEntity() {

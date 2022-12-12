@@ -50,7 +50,7 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .ignoringAntMatchers("/member/setmember") // 회원가입
                     .ignoringAntMatchers("/board/setbcategory") // 회원가입
                     .ignoringAntMatchers("/board/setboard") // 게시글 작성
-                    .ignoringAntMatchers("/board/boardlist") // 게시글 작성
+                    .ignoringAntMatchers("/board/boardlist") // 게시글 보기
                     .and()
 
                 // SNS 로그인 보안 설정

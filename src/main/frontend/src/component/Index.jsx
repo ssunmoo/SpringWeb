@@ -15,6 +15,8 @@ import Login from "./member/Login";
 import BoardList from "./board/BoardList";
 import Home from "./Home";
 import BoardWrite from "./board/BoardWrite";
+import BoardView from "./board/BoardView";
+
 
 // 리액트 공부방 import
 import Library from "../book/chapter3/Library";
@@ -52,6 +54,8 @@ export default function Index( props ){
                     <Route path="/member/login" element={ <Login /> } />
                     <Route path="/board/list" element={ <BoardList /> } />
                     <Route path="/board/write" element={ <BoardWrite /> } />
+                    <Route path="/board/view/:bno" element={ <BoardView /> } />
+
                     <Route path="/book/list" element={ <BookList /> } />
                     <Route path="/book/Library" element={ <Library /> } />
                     <Route path="/book/Clock" element={ <Clock /> } />

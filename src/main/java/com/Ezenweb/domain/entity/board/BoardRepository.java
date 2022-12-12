@@ -11,19 +11,25 @@ import org.springframework.stereotype.Repository;
 public interface BoardRepository extends JpaRepository< BoardEntity, Integer > {
                                                // 조작할 것의 클래스명, PK의 자료형
 
-    // 1. 제목 검색
-    @Query( value = "select * from board where bcno = :bcno and btitle like %:keyword%", nativeQuery = true )
-    Page<BoardEntity> findBybtitle( int bcno, String keyword, Pageable pageable );
+//    // 1. 제목 검색
+//    @Query( value = "select * from board where bcno = :bcno and btitle like %:keyword%", nativeQuery = true )
+//    Page<BoardEntity> findBybtitle( int bcno, String keyword, Pageable pageable );
+//
+//    // 2. 내용 검색
+//    @Query( value = "select * from board where bcno = :bcno and bcontent like %:keyword%", nativeQuery = true )
+//    Page<BoardEntity> findBybcontent( int bcno, String keyword, Pageable pageable );
+//
+//    // 2. 검색이 없을 때
+//    @Query( value = "select * from board where bcno = :bcno", nativeQuery = true )
+//    Page<BoardEntity> findBybcno( @Param("bcno") int bcno, Pageable pageable );
 
-    // 2. 내용 검색
-    @Query( value = "select * from board where bcno = :bcno and bcontent like %:keyword%", nativeQuery = true )
-    Page<BoardEntity> findBybcontent( int bcno, String keyword, Pageable pageable );
-
-    // 2. 검색이 없을 때
-    @Query( value = "select * from board where bcno = :bcno", nativeQuery = true )
-    Page<BoardEntity> findBybcno( @Param("bcno") int bcno, Pageable pageable );
-
-
+    // 위 1~3 통합
+    @Query( value = "SELECT * FROM board " +
+                    "WHERE " +
+                        "IF( :bcno = 0 , bcno like '%%' , bcno = :bcno  ) and " +
+                        "IF( :key = '' , true ," +
+                        "IF( :key = 'btitle' ,  btitle like %:keyword% , bcontent like %:keyword%  ) )", nativeQuery = true )
+    Page<BoardEntity> findBySearch( int bcno , String key , String keyword , Pageable pageable);
 
 
     // 1. 기본 메소드 외 메소드 추가

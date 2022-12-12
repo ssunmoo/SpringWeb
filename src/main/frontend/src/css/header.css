@@ -4,6 +4,10 @@ a{
     color: #4b4b4b;
 }
 
+ul{
+    list-style:none;
+}
+
 .header-name{
     color: darkslateblue;
 }

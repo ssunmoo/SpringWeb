@@ -45,7 +45,7 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .and()
 
                 // 요청 위조 방지 설정 [ 해당 주소는 모두 들어갈 수 있게 ]
-                .csrf()
+                .csrf() // 시큐리티는 post 타입만 막음 post 열어줘야 함
                     .ignoringAntMatchers("/member/getmember") // 로그인
                     .ignoringAntMatchers("/member/setmember") // 회원가입
                     .ignoringAntMatchers("/board/setbcategory") // 회원가입

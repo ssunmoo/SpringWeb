@@ -57,7 +57,7 @@ public class BoardService {
     private GuestbookCgRepository guestbookCgRepository; // 비회원게시판 카테고리 리포지토리
 
     // [ 첨부파일 경로 ]
-    String path = "C:\\Users\\504\\IdeaProjects\\SpringWeb\\src\\main\\resources\\static\\bupload\\";
+    String path = "C:\\upload\\";
 
     // --------------------------- 2. 서비스 ----------------------------------------------
 
@@ -107,7 +107,7 @@ public class BoardService {
     // * 첨부파일업로드 [ 1. 쓰기, 수정 메소드 사용 ]
     @Transactional
     public boolean fileupload( BoardDto boardDto , BoardEntity boardEntity ) {
-        if ( boardDto.getBfile() != null ) {  // ** 첨부파일 있을때
+        if ( !boardDto.getBfile().getOriginalFilename().equals("") ) {  // ** 첨부파일의 이름이 진짜 있을때, 공백이 아니면
             // ** 업로드된 파일의 이름 [ ** 문제점 : 파일 명 중복 ]
             String uuid = UUID.randomUUID().toString(); // 난수 생성
             String filename = uuid + "_" + boardDto.getBfile().getOriginalFilename(); // 2. 난수+파일명
@@ -132,8 +132,6 @@ public class BoardService {
     // 1. 게시물 작성
     @Transactional
     public boolean setboard( BoardDto boardDto ){
-        System.out.println("-------서비스dto-------");
-        System.out.println(boardDto.toString());
         // 1. 회원 정보 가져오기
         MemberEntity memberEntity = memberService.getEntity(); // 시큐리티 적용 전/후 확인
         if( memberEntity == null ) {
@@ -242,17 +240,15 @@ public class BoardService {
             BoardEntity boardEntity = optional.get();
 
             // 1. 수정할 첨부파일이 있을 때 : 기존 파일 삭제 후 새로 업로드
-            if( boardDto.getBfile() != null){       // 수정할 정보
+            if( !boardDto.getBfile().getOriginalFilename().equals("") ){       // 수정할 정보
                 if( boardEntity.getBfile() != null ){    // 기존 첨부파일 있을 떄
                     File file = new File( path + boardEntity.getBfile() ); // 기존 첨부파일 객체화
                     if( file.exists()) { // 존재하면
                         file.delete();   // 파일 삭제
                     }
-                    // 기존 첨부파일이 없을 때
-                    fileupload( boardDto, boardEntity ); // 업로드 함수 실행
                 }
+                fileupload( boardDto, boardEntity ); // 업로드 함수 실행
             }
-
             // * 수정 처리 [ 메소드별도 존재x ] 엔티티 객체 자체를 수정 [ entity <-매핑-> dto ]
             boardEntity.setBtitle( boardDto.getBtitle() );
             boardEntity.setBcontent( boardDto.getBcontent() );

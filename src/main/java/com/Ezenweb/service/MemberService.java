@@ -95,9 +95,6 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         return memberDto; // dto에 담았으니 dto 리턴
     }
 
-    public void dads(){
-        return;
-    }
     // -------------------------------- 전역 객체 -------------------------------------
     @Autowired
     private MemberRepository memberRepository;
@@ -296,7 +293,8 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
 //            if( memberDto.getAuthorities().contains("일반회원") ){
 //            }else if( memberDto.getAuthorities().contains("관리자") ){
 //            }
-            return memberDto.getMemail()+"_"+memberDto.getAuthorities(); //+memberDto.getAuthorities();
+            // return memberDto.getMemail()+"_"+memberDto.getAuthorities(); //+memberDto.getAuthorities();
+            return memberDto.getMemail();
         }
     }
 

@@ -30,8 +30,13 @@ export default function BookList( props ){
                 <Link to="/chapter10/AttendanceBook" > 챕터10 </Link>
             </button>
             <button>
-                <Link to="/chapter11/SignUp" > 챕터10 </Link>
+                <Link to="/chapter11/SignUp" > 챕터11 </Link>
             </button>
+            <button>
+                <Link to="/chapter12/Calculator" > 챕터12 </Link>
+            </button>
+
+
         </div>
 
     );

@@ -17,7 +17,6 @@ import Home from "./Home";
 import BoardWrite from "./board/BoardWrite";
 import BoardView from "./board/BoardView";
 import BoardUpdate from "./board/BoardUpdate";
-import Chatting from "./chatting/Chatting"
 
 // 리액트 공부방 import
 import Library from "../book/chapter3/Library";
@@ -30,7 +29,7 @@ import LandingPage from "../book/chapter9/LandingPage";
 import BookList from "../book/BookList"
 import AttendanceBook from "../book/chapter10/AttendanceBook";
 import SignUp from "../book/chapter11/SignUp";
-
+import Calculator from "../book/chapter12/Calculator";
 
 
 // 라우터 설치 [ 터미널 ] npm i react-router-dom
@@ -57,7 +56,6 @@ export default function Index( props ){
                     <Route path="/board/write" element={ <BoardWrite /> } />
                     <Route path="/board/view/:bno" element={ <BoardView /> } />
                     <Route path="/board/update/:bno" element={ <BoardUpdate /> } />
-                    <Route path="/chatting" element={ <Chatting/> } />
 
                     <Route path="/book/list" element={ <BookList /> } />
                     <Route path="/book/Library" element={ <Library /> } />
@@ -69,6 +67,7 @@ export default function Index( props ){
                     <Route path="/book/LandingPage" element={ <LandingPage /> } />
                     <Route path="/chapter10/AttendanceBook" element={ <AttendanceBook /> } />
                     <Route path="/chapter11/SignUp" element={ <SignUp /> } />
+                    <Route path="/chapter12/Calculator" element={ <Calculator /> } />
                 </Routes>
 
                 <Footer/>

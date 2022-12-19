@@ -27,6 +27,15 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // super.configure(http); // 주석처리하면 인증 다 풀림
         http
+                // 권한[role]에 따른 http 접근 제한
+                .authorizeRequests() // 인증 요청 URL [ 로그인 ]
+                    .antMatchers("/board/write").hasRole("MEMBER") // 해당 URL에는 MEMBER만 접근 가능
+                    .antMatchers("/**").permitAll() // 그외 모든 Role 접근 가능
+                    .antMatchers("/board/update").hasRole("MEMBER") // 해당 URL에는 MEMBER만 접근 가능
+                    .antMatchers("/**").permitAll() // 그외 모든 Role 접근 가능
+                    .antMatchers("/admin").hasRole("ADMIN") // 해당 URL에는 MEMBER만 접근 가능
+                    .antMatchers("/**").permitAll() // 그외 모든 Role 접근 가능
+                    .and()
                 // 일반 로그인 보안 설정
                 .formLogin()
                     .loginPage("/member/login") // 아이디와 비밀번호를 입력 받을 페이지 URL
@@ -53,7 +62,6 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .ignoringAntMatchers("/board/boardlist")    // 게시글 보기
                     .ignoringAntMatchers("/board/delboard")     // 게시글 삭제
                     .ignoringAntMatchers("/board/upboard")      // 게시글 수정
-
                     .and()
 
                 // SNS 로그인 보안 설정

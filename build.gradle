@@ -31,8 +31,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client' //  SNS 로그인 
 
     implementation 'org.springframework.boot:spring-boot-devtools:2.6.2' // 자동빌드
-
-    implementation 'org.springframework.boot:spring-boot-starter-websocket' // 웹 서버 소켓
 }
 
 tasks.named('test') {

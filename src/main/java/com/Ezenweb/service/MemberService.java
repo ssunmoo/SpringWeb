@@ -145,7 +145,7 @@ public class MemberService implements UserDetailsService, OAuth2UserService<OAut
         // memberRepository.save( 엔티티 객체 ) : 해당 엔티티 객체가 insert 생성된 엔티티객체 반환
 
         // 2. 회원 등급 넣어주기
-        entity.setRole("USER");
+        entity.setRole("ROLE_MEMBER");
 
         // 3. 결과 반환 [ 생성된 엔티티의 pk값 반환 ]
         return entity.getMno();

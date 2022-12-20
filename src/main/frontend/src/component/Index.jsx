@@ -30,6 +30,7 @@ import BookList from "../book/BookList"
 import AttendanceBook from "../book/chapter10/AttendanceBook";
 import SignUp from "../book/chapter11/SignUp";
 import Calculator from "../book/chapter12/Calculator";
+import RoomWrite from  "../component/room/RoomWrite"
 
 
 // 라우터 설치 [ 터미널 ] npm i react-router-dom
@@ -68,6 +69,7 @@ export default function Index( props ){
                     <Route path="/chapter10/AttendanceBook" element={ <AttendanceBook /> } />
                     <Route path="/chapter11/SignUp" element={ <SignUp /> } />
                     <Route path="/chapter12/Calculator" element={ <Calculator /> } />
+                    <Route path="/room/write" element={ <RoomWrite /> } />
                 </Routes>
 
                 <Footer/>

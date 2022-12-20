@@ -62,6 +62,7 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .ignoringAntMatchers("/board/boardlist")    // 게시글 보기
                     .ignoringAntMatchers("/board/delboard")     // 게시글 삭제
                     .ignoringAntMatchers("/board/upboard")      // 게시글 수정
+                    .ignoringAntMatchers("/room/setroom")      // 게시글 수정
                     .and()
 
                 // SNS 로그인 보안 설정

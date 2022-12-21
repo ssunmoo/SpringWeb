@@ -1,5 +1,6 @@
 package com.Ezenweb.domain.entity.room;
 
+import com.Ezenweb.domain.dto.RoomDto;
 import com.Ezenweb.domain.entity.member.MemberEntity;
 import lombok.*;
 
@@ -39,5 +40,31 @@ public class RoomEntity {
     @ToString.Exclude
     @Builder.Default
     private List<RoomImgEntity> roomImgEntityList = new ArrayList<>();
+
+    public RoomDto toRoomDto(){
+
+        List<String> list = new ArrayList<>();
+        roomImgEntityList.forEach( (img) ->{
+            list.add( img.getRimg() );
+        });
+
+        return RoomDto.builder()
+                .rno( this.rno )
+                .rtitle( this.rtitle )
+                .rprice( this.rprice )
+                .rtrans( this.rtrans )
+                .rname( this.rname )
+                .rlat( this.rlat )
+                .rlng( this.rlng )
+                .meamil( this.getMemberEntity().getMemail() )
+                .getrimg( list )
+                .build();
+    }
+
+
+
+
+
+
 
 }

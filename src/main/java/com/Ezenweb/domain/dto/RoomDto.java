@@ -18,6 +18,7 @@ import java.util.List;
 @Builder
 public class RoomDto {
 
+    private int rno;
     private String rtitle;
     private int rprice;
     private String rtrans;
@@ -27,35 +28,11 @@ public class RoomDto {
     private String rlat;
     private String rlng;
 
+    private String meamil; // 작성자
+    private List<String> getrimg; // 출력용 이미지
 
-
-//    @Autowired
-//    private RoomImgRepository roomImgRepository;
-//
-//    public RoomEntity toEntity(){
-//        ArrayList<RoomImgEntity> list = new ArrayList<>();
-//        for( MultipartFile file : rimg ){
-//            if( !file.getOriginalFilename().equals("") ){
-//                file.transferTo( ); // 이미지 업로드
-//                RoomImgEntity roomImgEntity = new RoomImgEntity();
-//                roomImgEntity.setRimg(file.getOriginalFilename());
-//                list.add(roomImgRepository.save( roomImgEntity ));
-//            }
-//        }
-//
-//        return RoomEntity.builder()
-//                .rtitle( this.rtitle )
-//                .rprice( this.rprice )
-//                .rtrans( this.rtrans )
-//                .rname( this.rname )
-//                .rlat( this.rlat )
-//                .rlng( this.rlng )
-//                .roomImgEntityList( list )
-//                .build();
-//    }
-
-        public RoomEntity toEntity(){
-            return RoomEntity.builder()
+    public RoomEntity toEntity(){
+        return RoomEntity.builder()
                 .rtitle( this.rtitle )
                 .rprice( this.rprice )
                 .rtrans( this.rtrans )
@@ -64,5 +41,9 @@ public class RoomDto {
                 .rlng( this.rlng )
                 .build();
     }
+
+
+
+
 
 }

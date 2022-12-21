@@ -52,7 +52,10 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/") // 로그아웃 성공 시
                     .invalidateHttpSession( true ) // 세션 [ principal ] 초기화
                     .and()
-
+                // 오류 발생 설정
+                .exceptionHandling()
+                    .accessDeniedPage("/error") // 오류 발생 시 시큐리티 페이지 전환
+                    .and()
                 // 요청 위조 방지 설정 [ 해당 주소는 모두 들어갈 수 있게 ]
                 .csrf() // 시큐리티는 post 타입만 막음 post 열어줘야 함
                     .ignoringAntMatchers("/member/getmember")   // 로그인
@@ -62,7 +65,7 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .ignoringAntMatchers("/board/boardlist")    // 게시글 보기
                     .ignoringAntMatchers("/board/delboard")     // 게시글 삭제
                     .ignoringAntMatchers("/board/upboard")      // 게시글 수정
-                    .ignoringAntMatchers("/room/setroom")      // 게시글 수정
+                    .ignoringAntMatchers("/room/setroom")       // 방 등록
                     .and()
 
                 // SNS 로그인 보안 설정
@@ -70,6 +73,7 @@ public class SecurityConfigration extends WebSecurityConfigurerAdapter {
                     .defaultSuccessUrl("/") // 로그인 성공 시 이동할 URL
                     .userInfoEndpoint() // Endpoint[종착점] : 소셜 회원 정보가 들어오는 곳
                     .userService( memberService ); // 해당 서비스 loadUser 메소드 구현
+
 
 
 

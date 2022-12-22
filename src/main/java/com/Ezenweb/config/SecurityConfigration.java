@@ -13,6 +13,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 public class SecurityConfigration extends WebSecurityConfigurerAdapter {
 
+
+
     @Autowired
     private MemberService memberService;
 

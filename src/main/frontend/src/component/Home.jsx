@@ -1,11 +1,21 @@
 import React, {useEffect, useRef, useState} from "react";
 import axios from "axios";
 
+// 부트스트랩 import
+import "bootstrap/dist/css/bootstrap.min.css"
+import Button from 'react-bootstrap/Button';
+import Offcanvas from 'react-bootstrap/Offcanvas';
+
 export default function Home( props ){
+
+    // 부트스트랩 사이브바 상태 변수
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const [ selectIndex, setSelectIndex ] = useState(0) // 마커 클릭 시 클릭된 room index 저장
 
     /* -----------------------[ 룸데이터 ]-------------------------- */
 
-    const [ roomList, setRoomList ] = useState([]);
+    const [ roomList, setRoomList ] = useState([{ getrimg : [] }]);
 
     useEffect( ()=>{
         axios
@@ -50,7 +60,7 @@ export default function Home( props ){
         var markerImage = new kakao.maps.MarkerImage(markerImageUrl, markerImageSize, markerImageOptions);
 
         // ** 데이터를 가져와서 마커 생성
-        var markers = roomList.map( (position) => {
+        var markers = roomList.map( ( position, i ) => {
             // 가져온 데이터의 좌표들을 반본문 돌리면서 마커 생성
             // 생성된 마커들을 markers에 저장
             let marker = new kakao.maps.Marker({
@@ -59,13 +69,15 @@ export default function Home( props ){
                 map: map // 마커를 표시할 지도 객체
             });
             kakao.maps.event.addListener(marker, 'click', function() {
-                alert(position.rtitle + position.rno );
+                setSelectIndex( i ); // 클릭된 마커의 room index 저장
+                setShow(true);
             });
             return marker;
         });
         // 클러스터러에 마커들을 추가합니다
         clusterer.addMarkers(markers);
-    });
+        
+    }, [roomList]); // 룸리스트 변경될때마다 리 렌더링
 
         /*// 마커 이미지의 주소
         var markerImageUrl = 'http://localhost:8080/static/media/roomicon.4d0c17c206ed03b1d823.png',
@@ -90,8 +102,29 @@ export default function Home( props ){
 
 
     return(
-        <div>
-            <div id="map" ref={ mapContainer } style={{width:'100%',height:'600px'}} ></div>
-        </div>
+
+        <>
+            {/* 부트스트랩 사이드 바 */}
+            <Offcanvas show={show} onHide={handleClose}>
+                <Offcanvas.Header closeButton>
+                    <Offcanvas.Title>Offcanvas</Offcanvas.Title>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    { selectIndex }
+                    {
+                        roomList[selectIndex].getrimg.map( ( img ) => {
+                            //return <img src={"http://localhost:8080/bupload/"+img} />
+                            return <img src={"http://localhost:8080/static/media/"+img} />
+                        })
+                    }
+                </Offcanvas.Body>
+            </Offcanvas>
+
+
+            <div>
+                <div id="map" ref={ mapContainer } style={{width:'100%',height:'600px'}} ></div>
+            </div>
+
+        </>
     )
 }
